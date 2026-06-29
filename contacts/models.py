@@ -15,9 +15,18 @@ class ContactMethod(models.Model):
 
 
 class ContactLog(models.Model):
+    METHOD_CHOICES = [
+        ('phone', '電話'),
+        ('email', 'メール'),
+        ('line', 'LINE'),
+        ('visit', '来訪'),
+        ('online', '訪問'),
+        ('other', 'その他'),
+    ]
+
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='contact_logs')
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='contact_logs')
-    method = models.ForeignKey(ContactMethod, on_delete=models.SET_NULL, null=True, blank=True)
+    method = models.CharField(max_length=20, choices=METHOD_CHOICES, default='phone')
     date = models.DateTimeField()
     title = models.CharField(max_length=200)
     content = models.TextField(blank=True)

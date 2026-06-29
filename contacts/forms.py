@@ -1,6 +1,6 @@
 from django import forms
 from django.utils import timezone
-from .models import ContactLog, ContactMethod
+from .models import ContactLog
 from clients.models import Client
 from tasks.models import Task
 
@@ -11,7 +11,6 @@ class ContactLogForm(forms.ModelForm):
         widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         initial=timezone.now,
     )
-    # タスク同時作成オプション
     create_task = forms.BooleanField(
         required=False,
         label='タスクを同時作成する'
@@ -46,5 +45,3 @@ class ContactLogForm(forms.ModelForm):
         from accounts.models import User
         super().__init__(*args, **kwargs)
         self.fields['task_assigned_user'].queryset = User.objects.filter(is_active=True)
-        # 接触方法は有効なもののみ
-        self.fields['method'].queryset = ContactMethod.objects.all()
