@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# 仮想環境
+venv/
+venv_crm/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+media/
+
+# macOS
+.DS_Store
+._*
+
+# 環境変数
+.env

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}ラベル削除確認{% endblock %}
+{% block content %}
+<h1>ラベル削除確認</h1>
+<p>「{{ label.name }}」を削除しますか？</p>
+{% if client_count > 0 %}
+<p style="color: red;">このラベルは現在{{ client_count }}件の取引先に使用されています。</p>
+{% endif %}
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">削除する</button>
+    <a href="/labels/">キャンセル</a>
+</form>
+{% endblock %}

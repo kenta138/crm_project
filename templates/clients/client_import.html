@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}取引先CSVインポート{% endblock %}
+{% block content %}
+<h1>取引先CSVインポート</h1>
+
+<a href="/clients/import/template/">テンプレートCSVをダウンロード</a>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <p>
+        <label>CSVファイル：<input type="file" name="csv_file" accept=".csv"></label>
+    </p>
+    <button type="submit">インポート実行</button>
+</form>
+
+{% if success_count %}
+<p style="color: green;">{{ success_count }}件の取引先を登録しました。</p>
+{% endif %}
+
+{% if errors %}
+<h2>エラー・スキップ一覧</h2>
+<ul>
+    {% for error in errors %}
+    <li style="color: red;">{{ error }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<a href="/clients/">取引先一覧に戻る</a>
+
+{% endblock %}

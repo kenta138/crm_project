@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}接触記録一覧{% endblock %}
+{% block content %}
+<h1>接触記録一覧</h1>
+
+<form method="get">
+    <input type="text" name="keyword" value="{{ keyword }}" placeholder="取引先名で検索">
+    <select name="method">
+        <option value="">接触方法：すべて</option>
+        {% for method in methods %}
+        <option value="{{ method.id }}" {% if method_id == method.id|stringformat:"s" %}selected{% endif %}>{{ method.name }}</option>
+        {% endfor %}
+    </select>
+    <input type="date" name="date_from" value="{{ date_from }}">
+    〜
+    <input type="date" name="date_to" value="{{ date_to }}">
+    <select name="assigned_user">
+        <option value="">担当者：すべて</option>
+        {% for user in users %}
+        <option value="{{ user.id }}" {% if assigned_user_id == user.id|stringformat:"s" %}selected{% endif %}>{{ user.name }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">検索</button>
+    <a href="/contacts/">リセット</a>
+</form>
+
+<a href="/contacts/new/">新規登録</a>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>接触日時</th>
+            <th>取引先</th>
+            <th>タイトル</th>
+            <th>接触方法</th>
+            <th>担当者</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in page_obj %}
+        <tr>
+            <td>{{ log.date|date:"Y/m/d H:i" }}</td>
+            <td><a href="/clients/{{ log.client.id }}/">{{ log.client.name }}</a></td>
+            <td><a href="/contacts/{{ log.id }}/">{{ log.title }}</a></td>
+            <td>{{ log.method.name|default:"-" }}</td>
+            <td>{{ log.user.name|default:"-" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">接触記録が見つかりませんでした。</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div>
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}&keyword={{ keyword }}&method={{ method_id }}&date_from={{ date_from }}&date_to={{ date_to }}&assigned_user={{ assigned_user_id }}">前へ</a>
+    {% endif %}
+    {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}ページ
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}&keyword={{ keyword }}&method={{ method_id }}&date_from={{ date_from }}&date_to={{ date_to }}&assigned_user={{ assigned_user_id }}">次へ</a>
+    {% endif %}
+</div>
+
+{% endblock %}

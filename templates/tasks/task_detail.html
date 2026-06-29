@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}{{ task.title }}{% endblock %}
+{% block content %}
+<h1>
+    {{ task.title }}
+    {% if is_overdue %}<span style="color: red;">（期日超過）</span>{% endif %}
+</h1>
+
+<table border="1">
+    <tr><th>取引先</th><td><a href="/clients/{{ task.client.id }}/">{{ task.client.name }}</a></td></tr>
+    <tr><th>期日</th><td>{{ task.due_date|date:"Y/m/d"|default:"-" }}</td></tr>
+    <tr><th>ステータス</th><td>{{ task.get_status_display }}</td></tr>
+    <tr><th>担当者</th><td>{{ task.assigned_user.name|default:"-" }}</td></tr>
+</table>
+
+<p>
+    <a href="/tasks/{{ task.id }}/edit/">編集</a>
+</p>
+
+<form method="post" action="/tasks/{{ task.id }}/status/">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="/tasks/{{ task.id }}/">
+    <select name="status">
+        {% for value, label in task.STATUS_CHOICES %}
+        <option value="{{ value }}" {% if task.status == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">ステータス更新</button>
+</form>
+
+{% if can_delete %}
+<form method="post" action="/tasks/{{ task.id }}/delete/">
+    {% csrf_token %}
+    <button type="submit" onclick="return confirm('本当に削除しますか？')">削除</button>
+</form>
+{% endif %}
+
+<a href="/clients/{{ task.client.id }}/">取引先詳細に戻る</a>
+
+{% endblock %}

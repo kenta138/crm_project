@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}接触記録削除確認{% endblock %}
+{% block content %}
+<h1>接触記録削除確認</h1>
+<p>「{{ log.title }}」を削除しますか？</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">削除する</button>
+    <a href="/contacts/{{ log.id }}/">キャンセル</a>
+</form>
+{% endblock %}

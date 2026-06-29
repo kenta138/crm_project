@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}{{ log.title }}{% endblock %}
+{% block content %}
+<h1>{{ log.title }}</h1>
+
+<table border="1">
+    <tr><th>取引先</th><td><a href="/clients/{{ log.client.id }}/">{{ log.client.name }}</a></td></tr>
+    <tr><th>接触日時</th><td>{{ log.date|date:"Y/m/d H:i" }}</td></tr>
+    <tr><th>接触方法</th><td>{{ log.method.name|default:"-" }}</td></tr>
+    <tr><th>担当者</th><td>{{ log.user.name|default:"-" }}</td></tr>
+    <tr><th>内容</th><td>{{ log.content|default:"-" }}</td></tr>
+</table>
+
+{% if can_edit %}
+<p>
+    <a href="/contacts/{{ log.id }}/edit/">編集</a>
+</p>
+<form method="post" action="/contacts/{{ log.id }}/delete/">
+    {% csrf_token %}
+    <button type="submit" onclick="return confirm('本当に削除しますか？')">削除</button>
+</form>
+{% endif %}
+
+<a href="/clients/{{ log.client.id }}/">取引先詳細に戻る</a>
+
+{% endblock %}

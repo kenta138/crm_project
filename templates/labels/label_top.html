@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}ラベル管理{% endblock %}
+{% block content %}
+<h1>ラベル管理</h1>
+
+<h2>カテゴリー新規追加</h2>
+<form method="post" action="/labels/category/new/">
+    {% csrf_token %}
+    {{ category_form.as_p }}
+    <button type="submit">追加</button>
+</form>
+
+<h2>ラベル新規追加</h2>
+<form method="post" action="/labels/new/">
+    {% csrf_token %}
+    {{ label_form.as_p }}
+    <button type="submit">追加</button>
+</form>
+
+<h2>カテゴリー・ラベル一覧</h2>
+{% for category in categories %}
+<h3>
+    {{ category.name }}
+    <a href="/labels/category/{{ category.id }}/edit/">編集</a>
+    <a href="/labels/category/{{ category.id }}/delete/">削除</a>
+</h3>
+<table border="1">
+    <thead>
+        <tr>
+            <th>ラベル名</th>
+            <th>有効</th>
+            <th>使用中取引先数</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for label in category.labels.all %}
+        <tr>
+            <td>{{ label.name }}</td>
+            <td>{% if label.is_active %}✓{% else %}✗{% endif %}</td>
+            <td>{{ label.clients.count }}件</td>
+            <td>
+                <a href="/labels/{{ label.id }}/edit/">編集</a>
+                <form method="post" action="/labels/{{ label.id }}/toggle/" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">
+                        {% if label.is_active %}無効にする{% else %}有効にする{% endif %}
+                    </button>
+                </form>
+                <a href="/labels/{{ label.id }}/delete/">削除</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">ラベルがありません。</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% empty %}
+<p>カテゴリーがありません。</p>
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}取引先一覧{% endblock %}
+{% block content %}
+<h1>取引先一覧</h1>
+
+<form method="get">
+    <input type="text" name="keyword" value="{{ keyword }}" placeholder="会社名で検索">
+    <select name="phase">
+        <option value="">フェーズ：すべて</option>
+        {% for value, label in phases %}
+        <option value="{{ value }}" {% if phase == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+    <select name="label">
+        <option value="">ラベル：すべて</option>
+        {% for label in labels %}
+        <option value="{{ label.id }}" {% if label_id == label.id|stringformat:"s" %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">検索</button>
+    <a href="/clients/">リセット</a>
+</form>
+
+<p>
+    <a href="/clients/new/">新規登録</a>
+    {% if user.role == 'admin' %}
+    | <a href="/clients/import/">CSVインポート</a>
+    | <a href="/clients/export/?phase={{ phase }}&label={{ label_id }}">CSVエクスポート</a>
+    {% endif %}
+</p>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>会社名</th>
+            <th>担当者</th>
+            <th>フェーズ</th>
+            <th>ラベル</th>
+            <th>最終接触日</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for client in page_obj %}
+        <tr>
+            <td><a href="/clients/{{ client.id }}/">{{ client.name }}</a></td>
+            <td>{{ client.assigned_user.name|default:"-" }}</td>
+            <td>{{ client.get_phase_display }}</td>
+            <td>
+                {% for label in client.labels.all %}
+                    {{ label.name }}{% if not forloop.last %}、{% endif %}
+                {% empty %}
+                    -
+                {% endfor %}
+            </td>
+            <td>{{ client.last_contact_date|date:"Y/m/d H:i"|default:"-" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">取引先が見つかりませんでした。</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div>
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}&keyword={{ keyword }}&phase={{ phase }}&label={{ label_id }}">前へ</a>
+    {% endif %}
+    {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}ページ
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}&keyword={{ keyword }}&phase={{ phase }}&label={{ label_id }}">次へ</a>
+    {% endif %}
+</div>
+
+{% endblock %}

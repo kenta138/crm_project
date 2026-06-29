@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block title %}{{ client.name }}{% endblock %}
+{% block content %}
+<h1>{{ client.name }}</h1>
+
+<table border="1">
+    <tr><th>フェーズ</th><td>{{ client.get_phase_display }}</td></tr>
+    <tr><th>担当者</th><td>{{ client.assigned_user.name|default:"-" }}</td></tr>
+    <tr><th>電話番号</th><td>{{ client.phone|default:"-" }}</td></tr>
+    <tr><th>メールアドレス</th><td>{{ client.email|default:"-" }}</td></tr>
+    <tr><th>メモ</th><td>{{ client.memo|default:"-" }}</td></tr>
+    <tr><th>最終接触日</th><td>{{ client.last_contact_date|date:"Y/m/d H:i"|default:"-" }}</td></tr>
+    <tr>
+        <th>ラベル</th>
+        <td>
+            {% for label in client.labels.all %}
+                {{ label.name }}{% if not forloop.last %}、{% endif %}
+            {% empty %}
+                -
+            {% endfor %}
+        </td>
+    </tr>
+</table>
+
+<p>
+    {% if can_edit %}
+    <a href="/clients/{{ client.id }}/edit/">編集</a>
+    {% endif %}
+    <a href="/contacts/new/?client={{ client.id }}">接触記録を追加</a>
+</p>
+
+<h2>接触記録（直近10件）</h2>
+{% if contact_logs %}
+<table border="1">
+    <thead>
+        <tr>
+            <th>接触日時</th>
+            <th>タイトル</th>
+            <th>接触方法</th>
+            <th>担当者</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in contact_logs %}
+        <tr>
+            <td>{{ log.date|date:"Y/m/d H:i" }}</td>
+            <td><a href="/contacts/{{ log.id }}/">{{ log.title }}</a></td>
+            <td>{{ log.method.name|default:"-" }}</td>
+            <td>{{ log.user.name|default:"-" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>接触記録はありません。</p>
+{% endif %}
+
+<h2>タスク</h2>
+<form method="get">
+    <select name="task_status">
+        <option value="">ステータス：すべて</option>
+        {% for value, label in task_status_choices %}
+        <option value="{{ value }}" {% if task_status == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">絞り込み</button>
+    <a href="/clients/{{ client.id }}/">リセット</a>
+</form>
+
+<a href="/tasks/new/?client={{ client.id }}">タスクを追加</a>
+
+{% if tasks %}
+<table border="1">
+    <thead>
+        <tr>
+            <th>タイトル</th>
+            <th>期日</th>
+            <th>ステータス</th>
+            <th>担当者</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td><a href="/tasks/{{ task.id }}/">{{ task.title }}</a></td>
+            <td>{{ task.due_date|date:"Y/m/d"|default:"-" }}</td>
+            <td>{{ task.get_status_display }}</td>
+            <td>{{ task.assigned_user.name|default:"-" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>タスクはありません。</p>
+{% endif %}
+
+<hr>
+{% if can_delete %}
+<form method="post" action="/clients/{{ client.id }}/delete/">
+    {% csrf_token %}
+    <button type="submit" onclick="return confirm('本当に削除しますか？')">この取引先を削除</button>
+</form>
+{% endif %}
+
+{% endblock %}

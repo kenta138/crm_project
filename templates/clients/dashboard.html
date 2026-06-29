@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}ダッシュボード{% endblock %}
+{% block content %}
+<h1>ダッシュボード</h1>
+
+<h2>フェーズ別サマリー</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>フェーズ</th>
+            <th>件数</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for phase in phase_summary %}
+        <tr>
+            <td>{{ phase.label }}</td>
+            <td>
+                <a href="/clients/?phase={{ phase.value }}">{{ phase.count }}件</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>今日期限のタスク</h2>
+{% if today_tasks %}
+<table border="1">
+    <thead>
+        <tr>
+            <th>タスク名</th>
+            <th>取引先</th>
+            <th>担当者</th>
+            <th>ステータス</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in today_tasks %}
+        <tr>
+            <td>{{ task.title }}</td>
+            <td>{{ task.client.name }}</td>
+            <td>{{ task.assigned_user.name }}</td>
+            <td>{{ task.get_status_display }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>今日期限のタスクはありません。</p>
+{% endif %}
+
+{% endblock %}
