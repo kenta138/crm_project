@@ -10,4 +10,26 @@
     <a href="/contacts/">キャンセル</a>
 </form>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const titleField = document.getElementById('id_title');
+        const taskTitleField = document.getElementById('id_task_title');
+        let taskTitleManuallyEdited = false;
+    
+        if (taskTitleField) {
+            taskTitleField.addEventListener('input', function() {
+                taskTitleManuallyEdited = true;
+            });
+        }
+    
+        if (titleField && taskTitleField) {
+            titleField.addEventListener('input', function() {
+                if (!taskTitleManuallyEdited) {
+                    taskTitleField.value = titleField.value;
+                }
+            });
+        }
+    });
+    </script>    
+
 {% endblock %}

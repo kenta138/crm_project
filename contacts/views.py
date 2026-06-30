@@ -67,7 +67,7 @@ def contact_new(request):
         initial['client'] = client_id
 
     if request.method == 'POST':
-        form = ContactLogForm(request.POST)
+        form = ContactLogForm(request.POST, request=request)
         if form.is_valid():
             log = form.save(commit=False)
             log.user = request.user
@@ -98,7 +98,7 @@ def contact_new(request):
             messages.success(request, '接触記録を登録しました。')
             return redirect('client_detail', pk=log.client.pk)
     else:
-        form = ContactLogForm(initial=initial)
+        form = ContactLogForm(initial=initial, request=request)
 
     return render(request, 'contacts/contact_form.html', {'form': form, 'title': '接触記録入力'})
 
