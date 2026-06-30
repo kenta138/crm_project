@@ -45,7 +45,7 @@
         <tr>
             <td>{{ log.date|date:"Y/m/d H:i" }}</td>
             <td><a href="/contacts/{{ log.id }}/">{{ log.title }}</a></td>
-            <td>{{ log.method.name|default:"-" }}</td>
+            <td>{{ log.get_method_display }}</td>
             <td>{{ log.user.name|default:"-" }}</td>
         </tr>
         {% endfor %}

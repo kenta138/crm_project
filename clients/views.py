@@ -117,7 +117,7 @@ def client_detail(request, pk):
 
     contact_logs = client.contact_logs.filter(
         deleted_at__isnull=True
-    ).select_related('user', 'method').order_by('-date')[:10]
+    ).select_related('user').order_by('-date')[:10]
 
     tasks = client.tasks.filter(
         deleted_at__isnull=True

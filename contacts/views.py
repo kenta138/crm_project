@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.contrib import messages
-from .models import ContactLog, ContactMethod
+from .models import ContactLog
 from .forms import ContactLogForm
 from clients.models import Client
 from tasks.models import Task
@@ -18,16 +18,16 @@ def can_edit(user):
 def contact_list(request):
     logs = ContactLog.objects.filter(
         deleted_at__isnull=True
-    ).select_related('client', 'user', 'method').order_by('-date')
+    ).select_related('client', 'user').order_by('-date')
 
     # フィルタ
     keyword = request.GET.get('keyword', '')
     if keyword:
         logs = logs.filter(client__name__icontains=keyword)
 
-    method_id = request.GET.get('method', '')
-    if method_id:
-        logs = logs.filter(method__id=method_id)
+    method = request.GET.get('method', '')
+    if method:
+        logs = logs.filter(method=method)
 
     date_from = request.GET.get('date_from', '')
     if date_from:
@@ -48,11 +48,11 @@ def contact_list(request):
     context = {
         'page_obj': page_obj,
         'keyword': keyword,
-        'method_id': method_id,
+        'method': method,
         'date_from': date_from,
         'date_to': date_to,
         'assigned_user_id': assigned_user_id,
-        'methods': ContactMethod.objects.all(),
+        'method_choices': ContactLog.METHOD_CHOICES,
         'users': User.objects.filter(is_active=True),
     }
     return render(request, 'contacts/contact_list.html', context)
