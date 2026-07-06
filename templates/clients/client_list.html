@@ -11,13 +11,15 @@
         <option value="{{ value }}" {% if phase == value %}selected{% endif %}>{{ label }}</option>
         {% endfor %}
     </select>
-    <select name="label">
-        <option value="">ラベル：すべて</option>
+    <fieldset>
+        <legend>ラベル</legend>
         {% for label in labels %}
-        <option value="{{ label.id }}" {% if label_id == label.id|stringformat:"s" %}selected{% endif %}>{{ label }}</option>
+        <label>
+            <input type="checkbox" name="label" value="{{ label.id }}" {% if label.id|stringformat:"s" in label_ids %}checked{% endif %}>
+            {{ label }}
+        </label>
         {% endfor %}
-    </select>
-    <button type="submit">検索</button>
+    </fieldset>    <button type="submit">検索</button>
     <a href="/clients/">リセット</a>
 </form>
 
@@ -25,8 +27,7 @@
     <a href="/clients/new/">新規登録</a>
     {% if user.role == 'admin' %}
     | <a href="/clients/import/">CSVインポート</a>
-    | <a href="/clients/export/?phase={{ phase }}&label={{ label_id }}">CSVエクスポート</a>
-    {% endif %}
+    | <a href="/clients/export/?phase={{ phase }}{% for lid in label_ids %}&label={{ lid }}{% endfor %}">CSVエクスポート</a>    {% endif %}
 </p>
 
 <table border="1">
@@ -64,11 +65,10 @@
 
 <div>
     {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}&keyword={{ keyword }}&phase={{ phase }}&label={{ label_id }}">前へ</a>
-    {% endif %}
+        <a href="?page={{ page_obj.previous_page_number }}&keyword={{ keyword }}&phase={{ phase }}{% for lid in label_ids %}&label={{ lid }}{% endfor %}">前へ</a>    {% endif %}
     {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}ページ
     {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}&keyword={{ keyword }}&phase={{ phase }}&label={{ label_id }}">次へ</a>
+        <a href="?page={{ page_obj.next_page_number }}&keyword={{ keyword }}&phase={{ phase }}{% for lid in label_ids %}&label={{ lid }}{% endfor %}">次へ</a>
     {% endif %}
 </div>
 

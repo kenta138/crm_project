@@ -9,7 +9,7 @@ from tasks.models import Task
 class ContactLogForm(forms.ModelForm):
     date = forms.DateTimeField(
         label='接触日時',
-        widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+        widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M'),
         initial=timezone.now,
     )
     create_task = forms.BooleanField(

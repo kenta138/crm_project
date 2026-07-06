@@ -14,7 +14,7 @@ class CategoryForm(forms.ModelForm):
 class LabelForm(forms.ModelForm):
     class Meta:
         model = Label
-        fields = ['name', 'category', 'is_active']
+        fields = ['category', 'name', 'is_active']
         labels = {
             'name': 'ラベル名',
             'category': 'カテゴリー',

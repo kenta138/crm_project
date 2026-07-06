@@ -84,3 +84,9 @@ AUTH_USER_MODEL = 'accounts.User'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/login/'
+
+SIGNUP_ALLOWED_EMAIL_DOMAINS = [
+    d.strip().lower()
+    for d in config('SIGNUP_ALLOWED_EMAIL_DOMAINS', default='').split(',')
+    if d.strip()
+]

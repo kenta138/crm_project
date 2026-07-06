@@ -75,10 +75,9 @@ def client_list(request):
     if phase:
         clients = clients.filter(phase=phase)
 
-    label_id = request.GET.get('label', '')
-    if label_id:
-        clients = clients.filter(labels__id=label_id)
-
+    label_ids = request.GET.getlist('label')
+    if label_ids:
+        clients = clients.filter(labels__id__in=label_ids).distinct()
     clients = clients.order_by('-last_contact_date')
 
     paginator = Paginator(clients, 20)
@@ -92,7 +91,7 @@ def client_list(request):
         'page_obj': page_obj,
         'keyword': keyword,
         'phase': phase,
-        'label_id': label_id,
+        'label_ids': label_ids,
         'labels': labels,
         'phases': phases,
     }
@@ -236,7 +235,7 @@ def client_import(request):
 @admin_required
 def client_export(request):
     phase = request.GET.get('phase', '')
-    label_id = request.GET.get('label', '')
+    label_ids = request.GET.getlist('label')
 
     clients = Client.objects.filter(
         deleted_at__isnull=True
@@ -244,8 +243,8 @@ def client_export(request):
 
     if phase:
         clients = clients.filter(phase=phase)
-    if label_id:
-        clients = clients.filter(labels__id=label_id)
+    if label_ids:
+        clients = clients.filter(labels__id__in=label_ids).distinct()
 
     response = HttpResponse(content_type='text/csv; charset=utf-8')
     response['Content-Disposition'] = 'attachment; filename="clients.csv"'
