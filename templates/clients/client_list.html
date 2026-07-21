@@ -13,14 +13,20 @@
     </select>
     <fieldset>
         <legend>ラベル</legend>
-        {% for label in labels %}
-        <label>
-            <input type="checkbox" name="label" value="{{ label.id }}" {% if label.id|stringformat:"s" in label_ids %}checked{% endif %}>
-            {{ label }}
-        </label>
+        {% for category in categories %}
+        <fieldset>
+            <legend>{{ category.name }}</legend>
+            {% for label in category.labels.all %}
+            {% if label.is_active %}
+            <label>
+                <input type="checkbox" name="label" value="{{ label.id }}" {% if label.id|stringformat:"s" in label_ids %}checked{% endif %}>
+                {{ label.name }}
+            </label>
+            {% endif %}
+            {% endfor %}
+        </fieldset>
         {% endfor %}
-    </fieldset>    <button type="submit">検索</button>
-    <a href="/clients/">リセット</a>
+    </fieldset>    <button type="submit">検索</button>    <a href="/clients/">リセット</a>
 </form>
 
 <p>

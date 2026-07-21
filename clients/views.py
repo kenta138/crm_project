@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from .models import Client
 from .forms import ClientForm
 from tasks.models import Task
-from labels.models import Label
+from labels.models import Category, Label
 from accounts.models import User
 
 
@@ -84,7 +84,7 @@ def client_list(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    labels = Label.objects.filter(is_active=True)
+    categories = Category.objects.prefetch_related('labels').all()
     phases = Client.PHASE_CHOICES
 
     context = {
@@ -92,7 +92,7 @@ def client_list(request):
         'keyword': keyword,
         'phase': phase,
         'label_ids': label_ids,
-        'labels': labels,
+        'categories': categories,
         'phases': phases,
     }
     return render(request, 'clients/client_list.html', context)
