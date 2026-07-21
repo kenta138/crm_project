@@ -7,7 +7,7 @@ class CategoryForm(forms.ModelForm):
         model = Category
         fields = ['name']
         labels = {
-            'name': 'カテゴリー名',
+            'name': 'ラベル名',
         }
 
 
@@ -16,7 +16,7 @@ class LabelForm(forms.ModelForm):
         model = Label
         fields = ['category', 'name', 'is_active']
         labels = {
-            'name': 'ラベル名',
-            'category': 'カテゴリー',
+            'name': '項目名',
+            'category': 'ラベル',
             'is_active': '有効',
         }

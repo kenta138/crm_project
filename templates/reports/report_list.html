@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>日報一覧</h2>
+
+<p><a href="{% url 'report_generate' %}">日報を作成する</a></p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>日付</th>
+            <th>担当者</th>
+            <th>内容（抜粋）</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for report in page_obj %}
+        <tr>
+            <td>{{ report.report_date }}</td>
+            <td>{{ report.user.name }}</td>
+            <td><a href="{% url 'report_detail' report.pk %}">{{ report.content|truncatechars:40 }}</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">日報がありません。</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if page_obj.has_other_pages %}
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">前へ</a>
+    {% endif %}
+    <span>{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">次へ</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

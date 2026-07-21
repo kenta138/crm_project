@@ -3,27 +3,26 @@
 {% block content %}
 <h1>ラベル管理</h1>
 
-<h2>カテゴリー新規追加</h2>
+<h2>ラベル新規追加</h2>
 <form method="post" action="/labels/category/new/">
     {% csrf_token %}
     {{ category_form.as_p }}
     <button type="submit">追加</button>
 </form>
-
-<h2>ラベル新規追加</h2>
-<form method="post" action="/labels/new/">
-    {% csrf_token %}
-    {{ label_form.as_p }}
-    <button type="submit">追加</button>
-</form>
-
-<h2>カテゴリー・ラベル一覧</h2>
+<h2>ラベル・項目一覧</h2>
 {% for category in categories %}
 <h3>
     {{ category.name }}
     <a href="/labels/category/{{ category.id }}/edit/">編集</a>
     <a href="/labels/category/{{ category.id }}/delete/">削除</a>
 </h3>
+<form method="post" action="/labels/new/" style="display:inline;">
+    {% csrf_token %}
+    <input type="hidden" name="category" value="{{ category.id }}">
+    <input type="hidden" name="is_active" value="on">
+    <input type="text" name="name" placeholder="新規項目名" required>
+    <button type="submit">項目追加</button>
+</form>
 <table border="1">
     <thead>
         <tr>

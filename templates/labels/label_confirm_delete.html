@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
-{% block title %}ラベル削除確認{% endblock %}
+{% block title %}項目削除確認{% endblock %}
 {% block content %}
-<h1>ラベル削除確認</h1>
+<h1>項目削除確認</h1>
 <p>「{{ label.name }}」を削除しますか？</p>
 {% if client_count > 0 %}
-<p style="color: red;">このラベルは現在{{ client_count }}件の取引先に使用されています。</p>
+<p style="color: red;">この項目は現在{{ client_count }}件の取引先に使用されています。</p>
 {% endif %}
 <form method="post">
     {% csrf_token %}

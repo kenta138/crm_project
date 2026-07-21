@@ -11,11 +11,13 @@
         <a href="/clients/">取引先一覧</a> |
         <a href="/contacts/">接触記録一覧</a> |
         <a href="/tasks/">タスク管理</a> |
+        <a href="/reports/">日報</a> |
         {% if user.role == 'admin' %}
         <a href="/labels/">ラベル管理</a> |
         <a href="/admin/">管理画面</a> |
         {% endif %}
         <a href="/logout/">ログアウト</a>
+        <span style="float:right;">{{ user.name }}様（{{ user.get_role_display }}）</span>
     </nav>
     <hr>
     {% endif %}

@@ -8,8 +8,8 @@ class Category(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = 'カテゴリー'
-        verbose_name_plural = 'カテゴリー'
+        verbose_name = 'ラベル'
+        verbose_name_plural = 'ラベル'
 
 
 class Label(models.Model):
@@ -21,5 +21,5 @@ class Label(models.Model):
         return f'{self.category.name} / {self.name}'
 
     class Meta:
-        verbose_name = 'ラベル'
-        verbose_name_plural = 'ラベル'
+        verbose_name = '項目'
+        verbose_name_plural = '項目'

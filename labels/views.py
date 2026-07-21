@@ -35,9 +35,9 @@ def category_new(request):
         form = CategoryForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'カテゴリーを追加しました。')
+            messages.success(request, 'ラベルを追加しました。')
         else:
-            messages.error(request, 'カテゴリーの追加に失敗しました。')
+            messages.error(request, 'ラベルの追加に失敗しました。')
     return redirect('label_top')
 
 
@@ -49,11 +49,11 @@ def category_edit(request, pk):
         form = CategoryForm(request.POST, instance=category)
         if form.is_valid():
             form.save()
-            messages.success(request, 'カテゴリーを更新しました。')
+            messages.success(request, 'ラベルを更新しました。')
             return redirect('label_top')
     else:
         form = CategoryForm(instance=category)
-    return render(request, 'labels/category_form.html', {'form': form, 'title': 'カテゴリー編集'})
+    return render(request, 'labels/category_form.html', {'form': form, 'title': 'ラベル編集'})
 
 
 @login_required
@@ -62,7 +62,7 @@ def category_delete(request, pk):
     category = get_object_or_404(Category, pk=pk)
     if request.method == 'POST':
         category.delete()
-        messages.success(request, 'カテゴリーを削除しました。')
+        messages.success(request, 'ラベルを削除しました。')
         return redirect('label_top')
     label_count = category.labels.count()
     return render(request, 'labels/category_confirm_delete.html', {
@@ -78,9 +78,9 @@ def label_new(request):
         form = LabelForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'ラベルを追加しました。')
+            messages.success(request, '項目を追加しました。')
         else:
-            messages.error(request, 'ラベルの追加に失敗しました。')
+            messages.error(request, '項目の追加に失敗しました。')
     return redirect('label_top')
 
 
@@ -92,11 +92,11 @@ def label_edit(request, pk):
         form = LabelForm(request.POST, instance=label)
         if form.is_valid():
             form.save()
-            messages.success(request, 'ラベルを更新しました。')
+            messages.success(request, '項目を更新しました。')
             return redirect('label_top')
     else:
         form = LabelForm(instance=label)
-    return render(request, 'labels/label_form.html', {'form': form, 'title': 'ラベル編集'})
+    return render(request, 'labels/label_form.html', {'form': form, 'title': '項目編集'})
 
 
 @login_required
@@ -105,7 +105,7 @@ def label_delete(request, pk):
     label = get_object_or_404(Label, pk=pk)
     if request.method == 'POST':
         label.delete()
-        messages.success(request, 'ラベルを削除しました。')
+        messages.success(request, '項目を削除しました。')
         return redirect('label_top')
     client_count = label.clients.count()
     return render(request, 'labels/label_confirm_delete.html', {
@@ -122,5 +122,5 @@ def label_toggle(request, pk):
         label.is_active = not label.is_active
         label.save()
         status = '有効' if label.is_active else '無効'
-        messages.success(request, f'ラベルを{status}にしました。')
+        messages.success(request, f'項目を{status}にしました。')
     return redirect('label_top')

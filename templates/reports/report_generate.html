@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>日報を作成する</h2>
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    <label for="report_date">対象日</label>
+    <input type="date" id="report_date" name="report_date" value="{{ today|date:'Y-m-d' }}" required>
+    <button type="submit">この日の接触記録からAIで日報を生成する</button>
+</form>
+{% endblock %}

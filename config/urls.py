@@ -10,4 +10,5 @@ urlpatterns = [
     path('', include('contacts.urls')),
     path('', include('tasks.urls')),
     path('', include('labels.urls')),
+    path('', include('reports.urls')),
 ]

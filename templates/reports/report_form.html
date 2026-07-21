@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>{{ title }}</h2>
+
+<p>対象日: {{ report_date }}</p>
+
+<form method="post" action="{{ form_action }}">
+    {% csrf_token %}
+    <input type="hidden" name="report_date" value="{{ report_date|date:'Y-m-d' }}">
+
+    {{ form.non_field_errors }}
+    <div>
+        {{ form.content.label_tag }}
+        <button type="button" onclick="copyReportContent()">クリップボードにコピー</button>
+        {{ form.content }}
+        {{ form.content.errors }}
+    </div>
+
+    <button type="submit">保存する</button>
+</form>
+
+<script>
+function copyReportContent() {
+    const textarea = document.getElementById('id_content');
+    navigator.clipboard.writeText(textarea.value);
+}
+</script>
+{% endblock %}

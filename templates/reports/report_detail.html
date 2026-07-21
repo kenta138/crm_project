@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>日報詳細</h2>
+
+<p>日付: {{ report.report_date }}</p>
+<p>担当者: {{ report.user.name }}</p>
+<pre>{{ report.content }}</pre>
+
+{% if report.user == request.user %}
+<p><a href="{% url 'report_edit' report.pk %}">編集する</a></p>
+{% endif %}
+
+<p><a href="{% url 'report_list' %}">一覧に戻る</a></p>
+{% endblock %}

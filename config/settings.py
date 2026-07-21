@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'labels',
     'contacts',
     'tasks',
+    'reports',
 ]
 
 MIDDLEWARE = [
@@ -90,3 +91,4 @@ SIGNUP_ALLOWED_EMAIL_DOMAINS = [
     for d in config('SIGNUP_ALLOWED_EMAIL_DOMAINS', default='').split(',')
     if d.strip()
 ]
+GOOGLE_API_KEY = config('GOOGLE_API_KEY')
