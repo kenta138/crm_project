@@ -4,7 +4,7 @@
 
 <p>対象日: {{ report_date }}</p>
 
-<form method="post" action="{{ form_action }}">
+<form method="post" action="{{ form_action }}" {% if already_exists %}onsubmit="return confirm('{{ report_date }}の日報は既に作成されています。上書きしてよろしいですか？');"{% endif %}>
     {% csrf_token %}
     <input type="hidden" name="report_date" value="{{ report_date|date:'Y-m-d' }}">
 

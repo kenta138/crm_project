@@ -81,14 +81,16 @@ def report_generate(request):
         generated_content = response.text
 
         form = DailyReportForm(initial={'content': generated_content})
+        already_exists = DailyReport.objects.filter(user=request.user, report_date=report_date).exists()
 
         return render(request, 'reports/report_form.html', {
             'form': form,
             'report_date': report_date,
             'title': '日報プレビュー・編集',
             'form_action': reverse('report_save'),
+            'already_exists': already_exists,
         })
-
+    
     return render(request, 'reports/report_generate.html', {'today': timezone.localdate()})
 
 
