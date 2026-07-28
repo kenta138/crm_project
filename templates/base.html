@@ -1,31 +1,37 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}CRM{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     {% if user.is_authenticated %}
     <nav>
-        <a href="/dashboard/">ダッシュボード</a> |
-        <a href="/clients/">取引先一覧</a> |
-        <a href="/contacts/">接触記録一覧</a> |
-        <a href="/tasks/">タスク管理</a> |
-        <a href="/reports/">日報</a> |
-        {% if user.role == 'admin' %}
-        <a href="/labels/">ラベル管理</a> |
-        <a href="/admin/">管理画面</a> |
-        {% endif %}
-        <a href="/logout/">ログアウト</a>
-        <span style="float:right;">{{ user.name }}様（{{ user.get_role_display }}）</span>
+        <div class="nav-links">
+            <a href="/dashboard/">ダッシュボード</a>
+            <a href="/clients/">取引先一覧</a>
+            <a href="/contacts/">接触記録一覧</a>
+            <a href="/tasks/">タスク管理</a>
+            <a href="/reports/">日報</a>
+            {% if user.role == 'admin' %}
+            <a href="/labels/">ラベル管理</a>
+            <a href="/admin/">管理画面</a>
+            {% endif %}
+            <a href="/logout/">ログアウト</a>
+        </div>
+        <div class="nav-user">{{ user.name }}様（{{ user.get_role_display }}）</div>
     </nav>
-    <hr>
     {% endif %}
-    {% if messages %}
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    {% endif %}
-    {% block content %}{% endblock %}
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <p class="message {{ message.tags }}">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+    </div>
 </body>
 </html>
