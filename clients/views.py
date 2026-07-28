@@ -1,3 +1,5 @@
+from datetime import timedelta
+from django.db.models import Q
 import csv
 import io
 from django.shortcuts import render, get_object_or_404, redirect
@@ -71,6 +73,28 @@ def client_list(request):
     label_ids = request.GET.getlist('label')
     if label_ids:
         clients = clients.filter(labels__id__in=label_ids).distinct()
+
+    assigned_user_id = request.GET.get('assigned_user', '')
+    if assigned_user_id:
+        clients = clients.filter(assigned_user__id=assigned_user_id)
+
+    contact_date_from = request.GET.get('contact_date_from', '')
+    if contact_date_from:
+        clients = clients.filter(last_contact_date__date__gte=contact_date_from)
+
+    contact_date_to = request.GET.get('contact_date_to', '')
+    if contact_date_to:
+        clients = clients.filter(last_contact_date__date__lte=contact_date_to)
+
+    follow_up_threshold = SystemSetting.get_solo().follow_up_threshold_days
+
+    follow_up_only = request.GET.get('follow_up_only', '')
+    if follow_up_only:
+        cutoff = timezone.now() - timedelta(days=follow_up_threshold)
+        clients = clients.filter(
+            Q(last_contact_date__isnull=True) | Q(last_contact_date__lt=cutoff)
+        )
+
     clients = clients.order_by('-last_contact_date')
 
     paginator = Paginator(clients, 20)
@@ -79,7 +103,6 @@ def client_list(request):
 
     categories = Category.objects.prefetch_related('labels').all()
     phases = Client.PHASE_CHOICES
-    follow_up_threshold = SystemSetting.get_solo().follow_up_threshold_days
 
     phase_summary = []
     for phase_value, phase_label in phases:
@@ -98,10 +121,15 @@ def client_list(request):
         'keyword': keyword,
         'phase': phase,
         'label_ids': label_ids,
+        'assigned_user_id': assigned_user_id,
+        'contact_date_from': contact_date_from,
+        'contact_date_to': contact_date_to,
+        'follow_up_only': follow_up_only,
         'categories': categories,
         'phases': phases,
         'follow_up_threshold': follow_up_threshold,
         'phase_summary': phase_summary,
+        'users': User.objects.filter(is_active=True),
     }
     return render(request, 'clients/client_list.html', context)
 

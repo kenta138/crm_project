@@ -29,6 +29,16 @@
         <option value="{{ value }}" {% if phase == value %}selected{% endif %}>{{ label }}</option>
         {% endfor %}
     </select>
+    <select name="assigned_user">
+        <option value="">担当者：すべて</option>
+        {% for u in users %}
+        <option value="{{ u.id }}" {% if assigned_user_id == u.id|stringformat:"s" %}selected{% endif %}>{{ u.name }}</option>
+        {% endfor %}
+    </select>
+    最終接触日:
+    <input type="date" name="contact_date_from" value="{{ contact_date_from }}">
+    〜
+    <input type="date" name="contact_date_to" value="{{ contact_date_to }}">
     <fieldset>
         <legend>ラベル</legend>
         {% for category in categories %}
@@ -44,7 +54,12 @@
             {% endfor %}
         </fieldset>
         {% endfor %}
-    </fieldset>    <button type="submit">検索</button>    <a href="/clients/">リセット</a>
+    </fieldset>
+    <label>
+        <input type="checkbox" name="follow_up_only" value="1" {% if follow_up_only %}checked{% endif %}>
+        要フォローのみ表示
+    </label>
+    <button type="submit">検索</button>    <a href="/clients/">リセット</a>
 </form>
 
 <p>
@@ -89,10 +104,10 @@
 
 <div>
     {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}&keyword={{ keyword }}&phase={{ phase }}{% for lid in label_ids %}&label={{ lid }}{% endfor %}">前へ</a>    {% endif %}
+        <a href="?page={{ page_obj.previous_page_number }}&keyword={{ keyword }}&phase={{ phase }}&assigned_user={{ assigned_user_id }}&contact_date_from={{ contact_date_from }}&contact_date_to={{ contact_date_to }}&follow_up_only={{ follow_up_only }}{% for lid in label_ids %}&label={{ lid }}{% endfor %}">前へ</a>    {% endif %}
     {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}ページ
     {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}&keyword={{ keyword }}&phase={{ phase }}{% for lid in label_ids %}&label={{ lid }}{% endfor %}">次へ</a>
+        <a href="?page={{ page_obj.next_page_number }}&keyword={{ keyword }}&phase={{ phase }}&assigned_user={{ assigned_user_id }}&contact_date_from={{ contact_date_from }}&contact_date_to={{ contact_date_to }}&follow_up_only={{ follow_up_only }}{% for lid in label_ids %}&label={{ lid }}{% endfor %}">次へ</a>
     {% endif %}
 </div>
 
