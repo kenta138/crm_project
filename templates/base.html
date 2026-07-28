@@ -10,6 +10,7 @@
 <body>
     {% if user.is_authenticated %}
     <nav>
+        <button type="button" class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="メニューを開閉">☰</button>
         <div class="nav-links">
             <a href="/dashboard/">ダッシュボード</a>
             <a href="/clients/">取引先一覧</a>
@@ -23,8 +24,7 @@
             <a href="/logout/">ログアウト</a>
         </div>
         <div class="nav-user">{{ user.name }}様（{{ user.get_role_display }}）</div>
-    </nav>
-    {% endif %}
+    </nav>    {% endif %}
     <div class="container">
         {% if messages %}
             {% for message in messages %}

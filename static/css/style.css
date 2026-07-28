@@ -27,6 +27,17 @@ nav {
     gap: 4px 14px;
 }
 
+.nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5em;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
 .nav-links a {
     color: #ecf0f1;
     text-decoration: none;
@@ -136,9 +147,24 @@ a {
     color: #721c24;
 }
 
-.message.warning {
-    background-color: #fff3cd;
-    color: #856404;
+.nav-toggle {
+    display: block;
+    order: 1;
+}
+
+.nav-user {
+    order: 2;
+}
+
+.nav-links {
+    order: 3;
+    display: none;
+    flex-direction: column;
+    width: 100%;
+}
+
+.nav-links.open {
+    display: flex;
 }
 
 .message.info, .message.debug {
