@@ -3,8 +3,8 @@
 {% block content %}
 <h1>取引先一覧</h1>
 
-<h2>フェーズ別サマリー</h2>
-<table border="1">
+<h2 id="phase-summary-toggle" style="cursor:pointer;" onclick="togglePhaseSummary()">▶ フェーズ別サマリー</h2>
+<table id="phase-summary-table" border="1" style="display:none;">
     <thead>
         <tr>
             <th>フェーズ</th>
@@ -62,8 +62,7 @@
             <th>フェーズ</th>
             <th>ラベル</th>
             <th>最終接触日</th>
-            <th>状況</th>
-        </tr>
+            <th>状況 <span class="tooltip-icon">❓<span class="tooltip-text">最終接触日から30日以上経過している場合に「要フォロー」と表示されます</span></span></th>        </tr>
     </thead>
     <tbody>
         {% for client in page_obj %}
@@ -98,4 +97,17 @@
     {% endif %}
 </div>
 
+<script>
+function togglePhaseSummary() {
+    var table = document.getElementById('phase-summary-table');
+    var toggle = document.getElementById('phase-summary-toggle');
+    if (table.style.display === 'none') {
+        table.style.display = 'table';
+        toggle.textContent = '▼ フェーズ別サマリー';
+    } else {
+        table.style.display = 'none';
+        toggle.textContent = '▶ フェーズ別サマリー';
+    }
+}
+</script>
 {% endblock %}
