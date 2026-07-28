@@ -16,7 +16,7 @@
     </thead>
     <tbody>
         {% for task in my_tasks %}
-        <tr>
+        <tr {% if task.due_date < today %}class="overdue-row"{% endif %}>
             <td><a href="/tasks/{{ task.id }}/">{{ task.title }}</a></td>
             <td>{{ task.client.name }}</td>
             <td>{{ task.due_date }}{% if task.due_date < today %} <strong>（期限超過）</strong>{% endif %}</td>

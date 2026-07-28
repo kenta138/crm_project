@@ -260,3 +260,7 @@ a {
     color: #2c3e50;
     font-weight: bold;
 }
+
+.overdue-row {
+    background-color: #fde8ea;
+}
