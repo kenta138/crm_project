@@ -3,50 +3,56 @@
 {% block content %}
 <h1>ダッシュボード</h1>
 
-<h2>フェーズ別サマリー</h2>
-<table border="1">
-    <thead>
-        <tr>
-            <th>フェーズ</th>
-            <th>件数</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for phase in phase_summary %}
-        <tr>
-            <td>{{ phase.label }}</td>
-            <td>
-                <a href="/clients/?phase={{ phase.value }}">{{ phase.count }}件</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<h2>今日期限のタスク</h2>
-{% if today_tasks %}
+<h2>自分のタスク（期限超過・本日期限）</h2>
+{% if my_tasks %}
 <table border="1">
     <thead>
         <tr>
             <th>タスク名</th>
             <th>取引先</th>
-            <th>担当者</th>
+            <th>期限</th>
             <th>ステータス</th>
         </tr>
     </thead>
     <tbody>
-        {% for task in today_tasks %}
+        {% for task in my_tasks %}
         <tr>
-            <td>{{ task.title }}</td>
+            <td><a href="/tasks/{{ task.id }}/">{{ task.title }}</a></td>
             <td>{{ task.client.name }}</td>
-            <td>{{ task.assigned_user.name }}</td>
+            <td>{{ task.due_date }}{% if task.due_date < today %} <strong>（期限超過）</strong>{% endif %}</td>
             <td>{{ task.get_status_display }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 {% else %}
-<p>今日期限のタスクはありません。</p>
+<p>対応が必要なタスクはありません。</p>
+{% endif %}
+
+<h2>自分の最近の接触記録</h2>
+{% if my_recent_contacts %}
+<table border="1">
+    <thead>
+        <tr>
+            <th>日時</th>
+            <th>取引先</th>
+            <th>件名</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in my_recent_contacts %}
+        <tr>
+            <td>{{ log.date|date:"Y/m/d H:i" }}</td>
+            <td>{{ log.client.name }}</td>
+            <td>{{ log.title }}</td>
+            <td><a href="/contacts/{{ log.id }}/edit/">編集</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>接触記録がありません。</p>
 {% endif %}
 
 {% endblock %}

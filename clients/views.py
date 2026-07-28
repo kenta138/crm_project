@@ -10,6 +10,7 @@ from .models import Client
 from .forms import ClientForm
 from tasks.models import Task
 from labels.models import Category, Label
+from contacts.models import ContactLog
 from accounts.models import User
 
 
@@ -30,36 +31,28 @@ def manager_required(view_func):
         return view_func(request, *args, **kwargs)
     return wrapper
 
-
 @login_required
 def dashboard(request):
     today = timezone.localdate()
-    today_tasks = Task.objects.filter(
-        due_date=today,
+    my_tasks = Task.objects.filter(
+        assigned_user=request.user,
+        due_date__lte=today,
         deleted_at__isnull=True
     ).exclude(
         status='done'
-    ).select_related('client', 'assigned_user')
+    ).select_related('client').order_by('due_date')
 
-    phases = Client.PHASE_CHOICES
-    phase_summary = []
-    for phase_value, phase_label in phases:
-        count = Client.objects.filter(
-            phase=phase_value,
-            deleted_at__isnull=True
-        ).count()
-        phase_summary.append({
-            'value': phase_value,
-            'label': phase_label,
-            'count': count,
-        })
+    my_recent_contacts = ContactLog.objects.filter(
+        user=request.user,
+        deleted_at__isnull=True
+    ).select_related('client').order_by('-date')[:10]
 
     context = {
-        'today_tasks': today_tasks,
-        'phase_summary': phase_summary,
+        'today': today,
+        'my_tasks': my_tasks,
+        'my_recent_contacts': my_recent_contacts,
     }
     return render(request, 'clients/dashboard.html', context)
-
 
 @login_required
 def client_list(request):
@@ -87,6 +80,18 @@ def client_list(request):
     categories = Category.objects.prefetch_related('labels').all()
     phases = Client.PHASE_CHOICES
 
+    phase_summary = []
+    for phase_value, phase_label in phases:
+        count = Client.objects.filter(
+            phase=phase_value,
+            deleted_at__isnull=True
+        ).count()
+        phase_summary.append({
+            'value': phase_value,
+            'label': phase_label,
+            'count': count,
+        })
+
     context = {
         'page_obj': page_obj,
         'keyword': keyword,
@@ -94,9 +99,9 @@ def client_list(request):
         'label_ids': label_ids,
         'categories': categories,
         'phases': phases,
+        'phase_summary': phase_summary,
     }
     return render(request, 'clients/client_list.html', context)
-
 
 @login_required
 def client_new(request):

@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from accounts.models import User
 from labels.models import Label
 
@@ -21,6 +22,12 @@ class Client(models.Model):
     memo = models.TextField(blank=True)
     last_contact_date = models.DateTimeField(null=True, blank=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
+
+    @property
+    def needs_follow_up(self):
+        if self.last_contact_date is None:
+            return True
+        return (timezone.now() - self.last_contact_date).days >= 30
 
     def __str__(self):
         return self.name

@@ -3,6 +3,24 @@
 {% block content %}
 <h1>取引先一覧</h1>
 
+<h2>フェーズ別サマリー</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>フェーズ</th>
+            <th>件数</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in phase_summary %}
+        <tr>
+            <td>{{ p.label }}</td>
+            <td><a href="/clients/?phase={{ p.value }}">{{ p.count }}件</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 <form method="get">
     <input type="text" name="keyword" value="{{ keyword }}" placeholder="会社名で検索">
     <select name="phase">
@@ -44,6 +62,7 @@
             <th>フェーズ</th>
             <th>ラベル</th>
             <th>最終接触日</th>
+            <th>状況</th>
         </tr>
     </thead>
     <tbody>
@@ -60,10 +79,11 @@
                 {% endfor %}
             </td>
             <td>{{ client.last_contact_date|date:"Y/m/d H:i"|default:"-" }}</td>
+            <td>{% if client.needs_follow_up %}<span style="color:red;">要フォロー</span>{% else %}-{% endif %}</td>
         </tr>
         {% empty %}
         <tr>
-            <td colspan="5">取引先が見つかりませんでした。</td>
+            <td colspan="6">取引先が見つかりませんでした。</td>
         </tr>
         {% endfor %}
     </tbody>
