@@ -4,6 +4,8 @@
 <h1>{{ client.name }}</h1>
 
 <table border="1">
+    <tr><th>システムID</th><td>{{ client.id }}</td></tr>
+    <tr><th>取引先管理ID</th><td>{{ client.custom_id|default:"-" }}</td></tr>
     <tr><th>フェーズ</th><td>{{ client.get_phase_display }}</td></tr>
     <tr><th>担当者</th><td>{{ client.assigned_user.name|default:"-" }}</td></tr>
     <tr><th>電話番号</th><td>{{ client.phone|default:"-" }}</td></tr>
@@ -29,7 +31,7 @@
     <a href="/contacts/new/?client={{ client.id }}">接触記録を追加</a>
 </p>
 
-<h2>接触記録（直近10件）</h2>
+<h2>接触記録（直近10件） <a href="/contacts/?client={{ client.id }}">すべて見る</a></h2>
 {% if contact_logs %}
 <table border="1">
     <thead>

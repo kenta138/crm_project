@@ -22,8 +22,17 @@ def contact_list(request):
 
     # フィルタ
     keyword = request.GET.get('keyword', '')
+    client_id = request.GET.get('client', '')
+    if client_id and not keyword:
+        client_obj = Client.objects.filter(id=client_id).first()
+        if client_obj:
+            keyword = client_obj.name
+
     if keyword:
         logs = logs.filter(client__name__icontains=keyword)
+
+    if client_id:
+        logs = logs.filter(client__id=client_id)
 
     method = request.GET.get('method', '')
     if method:
@@ -48,6 +57,7 @@ def contact_list(request):
     context = {
         'page_obj': page_obj,
         'keyword': keyword,
+        'client_id': client_id,
         'method': method,
         'date_from': date_from,
         'date_to': date_to,
