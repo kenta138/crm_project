@@ -5,7 +5,35 @@
 
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+        {% if field.name != 'labels' %}
+        <p>
+            {{ field.label_tag }}
+            {{ field }}
+            {{ field.errors }}
+        </p>
+        {% endif %}
+    {% endfor %}
+
+    <div>
+        <label>ラベル</label>
+        {{ form.labels.errors }}
+        {% for category in categories %}
+        <fieldset class="filter-group">
+            <legend>{{ category.name }}</legend>
+            {% for label in category.labels.all %}
+            {% if label.is_active %}
+            <label>
+                <input type="checkbox" name="labels" value="{{ label.id }}" {% if label.id in selected_label_ids %}checked{% endif %}>
+                {{ label.name }}
+            </label>
+            {% endif %}
+            {% endfor %}
+        </fieldset>
+        {% endfor %}
+    </div>
+
     <button type="submit">保存</button>
     <a href="/clients/">キャンセル</a>
 </form>
