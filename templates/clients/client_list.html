@@ -62,8 +62,7 @@
             <th>フェーズ</th>
             <th>ラベル</th>
             <th>最終接触日</th>
-            <th>状況 <span class="tooltip-icon">❓<span class="tooltip-text">最終接触日から30日以上経過している場合に「要フォロー」と表示されます</span></span></th>        </tr>
-    </thead>
+            <th>状況 <span class="tooltip-icon">❓<span class="tooltip-text">最終接触日から{{ follow_up_threshold }}日以上経過している場合に「要フォロー」と表示されます</span></span></th>    </thead>
     <tbody>
         {% for client in page_obj %}
         <tr>

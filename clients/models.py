@@ -25,9 +25,10 @@ class Client(models.Model):
 
     @property
     def needs_follow_up(self):
+        threshold = SystemSetting.get_solo().follow_up_threshold_days
         if self.last_contact_date is None:
             return True
-        return (timezone.now() - self.last_contact_date).days >= 30
+        return (timezone.now() - self.last_contact_date).days >= threshold
 
     def __str__(self):
         return self.name
@@ -35,3 +36,26 @@ class Client(models.Model):
     class Meta:
         verbose_name = '取引先'
         verbose_name_plural = '取引先'
+    
+class SystemSetting(models.Model):
+    follow_up_threshold_days = models.PositiveIntegerField(
+        default=30,
+        verbose_name='要フォロー判定日数',
+        help_text='最終接触日からこの日数以上経過した取引先を「要フォロー」として一覧に表示します。'
+    )
+
+    class Meta:
+        verbose_name = 'システム設定'
+        verbose_name_plural = 'システム設定'
+
+    def __str__(self):
+        return 'システム設定'
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def get_solo(cls):
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj

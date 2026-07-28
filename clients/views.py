@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.http import HttpResponse
-from .models import Client
+from .models import Client, SystemSetting
 from .forms import ClientForm
 from tasks.models import Task
 from labels.models import Category, Label
@@ -79,6 +79,7 @@ def client_list(request):
 
     categories = Category.objects.prefetch_related('labels').all()
     phases = Client.PHASE_CHOICES
+    follow_up_threshold = SystemSetting.get_solo().follow_up_threshold_days
 
     phase_summary = []
     for phase_value, phase_label in phases:
@@ -99,6 +100,7 @@ def client_list(request):
         'label_ids': label_ids,
         'categories': categories,
         'phases': phases,
+        'follow_up_threshold': follow_up_threshold,
         'phase_summary': phase_summary,
     }
     return render(request, 'clients/client_list.html', context)
