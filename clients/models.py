@@ -12,6 +12,13 @@ class Client(models.Model):
         ('dormant', '休眠'),
     ]
     name = models.CharField(max_length=200)
+    custom_id = models.CharField(
+        max_length=50,
+        unique=True,
+        blank=True,
+        null=True,
+        verbose_name='取引先管理ID'
+    )
     phase = models.CharField(max_length=20, choices=PHASE_CHOICES, default='new')
     labels = models.ManyToManyField(Label, blank=True, related_name='clients')
     assigned_user = models.ForeignKey(

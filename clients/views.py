@@ -1,3 +1,4 @@
+from urllib.parse import urlencode
 from datetime import timedelta
 from django.db.models import Q
 import csv
@@ -95,11 +96,44 @@ def client_list(request):
             Q(last_contact_date__isnull=True) | Q(last_contact_date__lt=cutoff)
         )
 
-    clients = clients.order_by('-last_contact_date')
+    SORT_FIELD_MAP = {
+        'id': 'id',
+        'custom_id': 'custom_id',
+        'name': 'name',
+        'assigned_user': 'assigned_user__name',
+        'phase': 'phase',
+        'last_contact_date': 'last_contact_date',
+    }
+    sort = request.GET.get('sort', 'id')
+    sort_key = sort[1:] if sort.startswith('-') else sort
+    if sort_key not in SORT_FIELD_MAP:
+        sort = 'id'
+        sort_key = 'id'
+    order_field = SORT_FIELD_MAP[sort_key]
+    if sort.startswith('-'):
+        order_field = '-' + order_field
+    clients = clients.order_by(order_field)
 
     paginator = Paginator(clients, 20)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+
+    query_parts = []
+    if keyword:
+        query_parts.append(('keyword', keyword))
+    if contact_date_from:
+        query_parts.append(('contact_date_from', contact_date_from))
+    if contact_date_to:
+        query_parts.append(('contact_date_to', contact_date_to))
+    if follow_up_only:
+        query_parts.append(('follow_up_only', follow_up_only))
+    for p in phase_values:
+        query_parts.append(('phase', p))
+    for uid in assigned_user_ids:
+        query_parts.append(('assigned_user', uid))
+    for lid in label_ids:
+        query_parts.append(('label', lid))
+    base_qs = urlencode(query_parts)
 
     categories = Category.objects.prefetch_related('labels').all()
     phases = Client.PHASE_CHOICES
@@ -125,6 +159,8 @@ def client_list(request):
         'contact_date_from': contact_date_from,
         'contact_date_to': contact_date_to,
         'follow_up_only': follow_up_only,
+        'sort': sort,
+        'base_qs': base_qs,
         'categories': categories,
         'phases': phases,
         'follow_up_threshold': follow_up_threshold,

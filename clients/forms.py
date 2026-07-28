@@ -13,9 +13,10 @@ class ClientForm(forms.ModelForm):
 
     class Meta:
         model = Client
-        fields = ['name', 'phase', 'assigned_user', 'phone', 'email', 'memo', 'labels']
+        fields = ['name', 'custom_id', 'phase', 'assigned_user', 'phone', 'email', 'memo', 'labels']
         labels = {
             'name': '会社名',
+            'custom_id': '取引先管理ID',
             'phase': 'フェーズ',
             'assigned_user': '担当者',
             'phone': '電話番号',

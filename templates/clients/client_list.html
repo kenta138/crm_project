@@ -70,21 +70,39 @@
     <a href="/clients/new/">新規登録</a>
     {% if user.role == 'admin' %}
     | <a href="/clients/import/">CSVインポート</a>
-    | <a href="/clients/export/?{% for p in phase_values %}phase={{ p }}&{% endfor %}{% for lid in label_ids %}label={{ lid }}&{% endfor %}">CSVエクスポート</a>    {% endif %}
+    | <a href="/clients/export/?{{ base_qs }}">CSVエクスポート</a>    {% endif %}
 </p>
 
 <table border="1">
     <thead>
         <tr>
-            <th>会社名</th>
-            <th>担当者</th>
-            <th>フェーズ</th>
+            <th>システムID
+                <a href="?sort=id&{{ base_qs }}" class="sort-arrow {% if sort == 'id' %}sort-active{% endif %}">▲</a><a href="?sort=-id&{{ base_qs }}" class="sort-arrow {% if sort == '-id' %}sort-active{% endif %}">▼</a>
+            </th>
+            <th>取引先管理ID
+                <a href="?sort=custom_id&{{ base_qs }}" class="sort-arrow {% if sort == 'custom_id' %}sort-active{% endif %}">▲</a><a href="?sort=-custom_id&{{ base_qs }}" class="sort-arrow {% if sort == '-custom_id' %}sort-active{% endif %}">▼</a>
+            </th>
+            <th>会社名
+                <a href="?sort=name&{{ base_qs }}" class="sort-arrow {% if sort == 'name' %}sort-active{% endif %}">▲</a><a href="?sort=-name&{{ base_qs }}" class="sort-arrow {% if sort == '-name' %}sort-active{% endif %}">▼</a>
+            </th>
+            <th>担当者
+                <a href="?sort=assigned_user&{{ base_qs }}" class="sort-arrow {% if sort == 'assigned_user' %}sort-active{% endif %}">▲</a><a href="?sort=-assigned_user&{{ base_qs }}" class="sort-arrow {% if sort == '-assigned_user' %}sort-active{% endif %}">▼</a>
+            </th>
+            <th>フェーズ
+                <a href="?sort=phase&{{ base_qs }}" class="sort-arrow {% if sort == 'phase' %}sort-active{% endif %}">▲</a><a href="?sort=-phase&{{ base_qs }}" class="sort-arrow {% if sort == '-phase' %}sort-active{% endif %}">▼</a>
+            </th>
             <th>ラベル</th>
-            <th>最終接触日</th>
-            <th>状況 <span class="tooltip-icon">❓<span class="tooltip-text">最終接触日から{{ follow_up_threshold }}日以上経過している場合に「要フォロー」と表示されます</span></span></th>    </thead>
+            <th>最終接触日
+                <a href="?sort=last_contact_date&{{ base_qs }}" class="sort-arrow {% if sort == 'last_contact_date' %}sort-active{% endif %}">▲</a><a href="?sort=-last_contact_date&{{ base_qs }}" class="sort-arrow {% if sort == '-last_contact_date' %}sort-active{% endif %}">▼</a>
+            </th>
+            <th>状況 <span class="tooltip-icon">❓<span class="tooltip-text">最終接触日から{{ follow_up_threshold }}日以上経過している場合に「要フォロー」と表示されます</span></span></th>
+        </tr>
+    </thead>
     <tbody>
         {% for client in page_obj %}
         <tr>
+            <td>{{ client.id }}</td>
+            <td>{{ client.custom_id|default:"-" }}</td>
             <td><a href="/clients/{{ client.id }}/">{{ client.name }}</a></td>
             <td>{{ client.assigned_user.name|default:"-" }}</td>
             <td>{{ client.get_phase_display }}</td>
@@ -100,7 +118,7 @@
         </tr>
         {% empty %}
         <tr>
-            <td colspan="6">取引先が見つかりませんでした。</td>
+            <td colspan="8">取引先が見つかりませんでした。</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -108,11 +126,12 @@
 
 <div>
     {% if page_obj.has_previous %}
-    <a href="?page={{ page_obj.previous_page_number }}&keyword={{ keyword }}&contact_date_from={{ contact_date_from }}&contact_date_to={{ contact_date_to }}&follow_up_only={{ follow_up_only }}{% for p in phase_values %}&phase={{ p }}{% endfor %}{% for uid in assigned_user_ids %}&assigned_user={{ uid }}{% endfor %}{% for lid in label_ids %}&label={{ lid }}{% endfor %}">前へ</a>    {% endif %}
-        {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}ページ
+    <a href="?page={{ page_obj.previous_page_number }}&sort={{ sort }}&{{ base_qs }}">前へ</a>    
+    {% endif %}
+            {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}ページ
     {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}&keyword={{ keyword }}&contact_date_from={{ contact_date_from }}&contact_date_to={{ contact_date_to }}&follow_up_only={{ follow_up_only }}{% for p in phase_values %}&phase={{ p }}{% endfor %}{% for uid in assigned_user_ids %}&assigned_user={{ uid }}{% endfor %}{% for lid in label_ids %}&label={{ lid }}{% endfor %}">次へ</a>
-        {% endif %}
+    <a href="?page={{ page_obj.next_page_number }}&sort={{ sort }}&{{ base_qs }}">次へ</a>
+            {% endif %}
 </div>
 
 <script>

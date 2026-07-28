@@ -248,3 +248,15 @@ a {
 .filter-group legend {
     padding: 0 6px 0 0;
 }
+
+.sort-arrow {
+    text-decoration: none;
+    color: #aaa;
+    font-size: 0.75em;
+    margin-left: 2px;
+}
+
+.sort-arrow.sort-active {
+    color: #2c3e50;
+    font-weight: bold;
+}
