@@ -66,17 +66,17 @@ def client_list(request):
     if keyword:
         clients = clients.filter(name__icontains=keyword)
 
-    phase = request.GET.get('phase', '')
-    if phase:
-        clients = clients.filter(phase=phase)
+    phase_values = request.GET.getlist('phase')
+    if phase_values:
+        clients = clients.filter(phase__in=phase_values)
 
     label_ids = request.GET.getlist('label')
     if label_ids:
         clients = clients.filter(labels__id__in=label_ids).distinct()
 
-    assigned_user_id = request.GET.get('assigned_user', '')
-    if assigned_user_id:
-        clients = clients.filter(assigned_user__id=assigned_user_id)
+    assigned_user_ids = request.GET.getlist('assigned_user')
+    if assigned_user_ids:
+        clients = clients.filter(assigned_user__id__in=assigned_user_ids)
 
     contact_date_from = request.GET.get('contact_date_from', '')
     if contact_date_from:
@@ -119,9 +119,9 @@ def client_list(request):
     context = {
         'page_obj': page_obj,
         'keyword': keyword,
-        'phase': phase,
+        'phase_values': phase_values,
         'label_ids': label_ids,
-        'assigned_user_id': assigned_user_id,
+        'assigned_user_ids': assigned_user_ids,
         'contact_date_from': contact_date_from,
         'contact_date_to': contact_date_to,
         'follow_up_only': follow_up_only,
@@ -269,15 +269,15 @@ def client_import(request):
 @login_required
 @admin_required
 def client_export(request):
-    phase = request.GET.get('phase', '')
+    phase_values = request.GET.getlist('phase')
     label_ids = request.GET.getlist('label')
 
     clients = Client.objects.filter(
         deleted_at__isnull=True
     ).select_related('assigned_user').prefetch_related('labels')
 
-    if phase:
-        clients = clients.filter(phase=phase)
+    if phase_values:
+        clients = clients.filter(phase__in=phase_values)
     if label_ids:
         clients = clients.filter(labels__id__in=label_ids).distinct()
 

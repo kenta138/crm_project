@@ -237,3 +237,14 @@ a {
     visibility: visible;
     opacity: 1;
 }
+
+.filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 12px;
+}
+
+.filter-group legend {
+    padding: 0 6px 0 0;
+}

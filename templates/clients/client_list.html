@@ -23,26 +23,30 @@
 
 <form method="get">
     <input type="text" name="keyword" value="{{ keyword }}" placeholder="会社名で検索">
-    <select name="phase">
-        <option value="">フェーズ：すべて</option>
-        {% for value, label in phases %}
-        <option value="{{ value }}" {% if phase == value %}selected{% endif %}>{{ label }}</option>
+    <fieldset class="filter-group">
+        <legend>フェーズ</legend>        {% for value, label in phases %}
+        <label>
+            <input type="checkbox" name="phase" value="{{ value }}" {% if value in phase_values %}checked{% endif %}>
+            {{ label }}
+        </label>
         {% endfor %}
-    </select>
-    <select name="assigned_user">
-        <option value="">担当者：すべて</option>
+    </fieldset>
+    <fieldset class="filter-group">
+        <legend>担当者</legend>
         {% for u in users %}
-        <option value="{{ u.id }}" {% if assigned_user_id == u.id|stringformat:"s" %}selected{% endif %}>{{ u.name }}</option>
+        <label>
+            <input type="checkbox" name="assigned_user" value="{{ u.id }}" {% if u.id|stringformat:"s" in assigned_user_ids %}checked{% endif %}>
+            {{ u.name }}
+        </label>
         {% endfor %}
-    </select>
-    最終接触日:
+    </fieldset>    最終接触日:
     <input type="date" name="contact_date_from" value="{{ contact_date_from }}">
     〜
     <input type="date" name="contact_date_to" value="{{ contact_date_to }}">
-    <fieldset>
+    <fieldset class="filter-group">
         <legend>ラベル</legend>
         {% for category in categories %}
-        <fieldset>
+        <fieldset class="filter-group">
             <legend>{{ category.name }}</legend>
             {% for label in category.labels.all %}
             {% if label.is_active %}
@@ -66,7 +70,7 @@
     <a href="/clients/new/">新規登録</a>
     {% if user.role == 'admin' %}
     | <a href="/clients/import/">CSVインポート</a>
-    | <a href="/clients/export/?phase={{ phase }}{% for lid in label_ids %}&label={{ lid }}{% endfor %}">CSVエクスポート</a>    {% endif %}
+    | <a href="/clients/export/?{% for p in phase_values %}phase={{ p }}&{% endfor %}{% for lid in label_ids %}label={{ lid }}&{% endfor %}">CSVエクスポート</a>    {% endif %}
 </p>
 
 <table border="1">
@@ -104,11 +108,11 @@
 
 <div>
     {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}&keyword={{ keyword }}&phase={{ phase }}&assigned_user={{ assigned_user_id }}&contact_date_from={{ contact_date_from }}&contact_date_to={{ contact_date_to }}&follow_up_only={{ follow_up_only }}{% for lid in label_ids %}&label={{ lid }}{% endfor %}">前へ</a>    {% endif %}
-    {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}ページ
+    <a href="?page={{ page_obj.previous_page_number }}&keyword={{ keyword }}&contact_date_from={{ contact_date_from }}&contact_date_to={{ contact_date_to }}&follow_up_only={{ follow_up_only }}{% for p in phase_values %}&phase={{ p }}{% endfor %}{% for uid in assigned_user_ids %}&assigned_user={{ uid }}{% endfor %}{% for lid in label_ids %}&label={{ lid }}{% endfor %}">前へ</a>    {% endif %}
+        {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}ページ
     {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}&keyword={{ keyword }}&phase={{ phase }}&assigned_user={{ assigned_user_id }}&contact_date_from={{ contact_date_from }}&contact_date_to={{ contact_date_to }}&follow_up_only={{ follow_up_only }}{% for lid in label_ids %}&label={{ lid }}{% endfor %}">次へ</a>
-    {% endif %}
+    <a href="?page={{ page_obj.next_page_number }}&keyword={{ keyword }}&contact_date_from={{ contact_date_from }}&contact_date_to={{ contact_date_to }}&follow_up_only={{ follow_up_only }}{% for p in phase_values %}&phase={{ p }}{% endfor %}{% for uid in assigned_user_ids %}&assigned_user={{ uid }}{% endfor %}{% for lid in label_ids %}&label={{ lid }}{% endfor %}">次へ</a>
+        {% endif %}
 </div>
 
 <script>
