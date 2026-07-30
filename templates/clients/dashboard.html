@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load jp_dates %}
 {% block title %}ダッシュボード{% endblock %}
 {% block content %}
 <h1>ダッシュボード</h1>
@@ -19,7 +20,7 @@
         <tr {% if task.due_date < today %}class="overdue-row"{% endif %}>
             <td><a href="/tasks/{{ task.id }}/">{{ task.title }}</a></td>
             <td><a href="/clients/{{ task.client.id }}/">{{ task.client.name }}</a></td>
-            <td>{{ task.due_date }}{% if task.due_date < today %} <strong>（期限超過）</strong>{% endif %}</td>
+            <td>{{ task.due_date|jpdate }}{% if task.due_date < today %} <strong>（期限超過）</strong>{% endif %}</td>
             <td>{{ task.get_status_display }}</td>
         </tr>
         {% endfor %}
@@ -45,7 +46,7 @@
         <tr>
             <td><a href="/contacts/{{ log.id }}/">{{ log.title }}</a></td>
             <td><a href="/clients/{{ log.client.id }}/">{{ log.client.name }}</a></td>
-            <td>{{ log.date|date:"Y/m/d H:i" }}</td>
+            <td>{{ log.date|jpdatetime }}</td>
             <td>{{ log.get_method_display }}</td>
         </tr>
         {% endfor %}

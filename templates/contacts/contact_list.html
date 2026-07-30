@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load jp_dates %}
 {% block title %}接触記録一覧{% endblock %}
 {% block content %}
 <h1>接触記録一覧</h1>
@@ -41,7 +42,7 @@
         <tr>
             <td><a href="/contacts/{{ log.id }}/">{{ log.title }}</a></td>
             <td><a href="/clients/{{ log.client.id }}/">{{ log.client.name }}</a></td>
-            <td>{{ log.date|date:"Y/m/d H:i" }}</td>
+            <td>{{ log.date|jpdatetime }}</td>
             <td>{{ log.get_method_display }}</td>
             <td>{{ log.user.name|default:"-" }}</td>
         </tr>

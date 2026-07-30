@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load jp_dates %}
 {% block title %}取引先一覧{% endblock %}
 {% block content %}
 <h1>取引先一覧</h1>
@@ -113,7 +114,7 @@
                     -
                 {% endfor %}
             </td>
-            <td>{{ client.last_contact_date|date:"Y/m/d H:i"|default:"-" }}</td>
+            <td>{{ client.last_contact_date|jpdatetime|default:"-" }}</td>
             <td>{% if client.needs_follow_up %}<span style="color:red;">要フォロー</span>{% else %}-{% endif %}</td>
         </tr>
         {% empty %}

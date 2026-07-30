@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
+{% load jp_dates %}
 {% block title %}{{ title }}{% endblock %}
 {% block content %}
 <h2>{{ title }}</h2>
 
-<p>対象日: {{ report_date }}</p>
+<p>対象日: {{ report_date|jpdate }}</p>
 
-<form method="post" action="{{ form_action }}" {% if already_exists %}onsubmit="return confirm('{{ report_date }}の日報は既に作成されています。上書きしてよろしいですか？');"{% endif %}>
+<form method="post" action="{{ form_action }}" {% if already_exists %}onsubmit="return confirm('{{ report_date|jpdate }}の日報は既に作成されています。上書きしてよろしいですか？');"{% endif %}>
     {% csrf_token %}
     <input type="hidden" name="report_date" value="{{ report_date|date:'Y-m-d' }}">
 

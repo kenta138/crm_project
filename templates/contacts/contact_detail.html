@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
+{% load jp_dates %}
 {% block title %}{{ log.title }}{% endblock %}
 {% block content %}
 <h1>{{ log.title }}</h1>
 
 <table border="1">
     <tr><th>取引先</th><td><a href="/clients/{{ log.client.id }}/">{{ log.client.name }}</a></td></tr>
-    <tr><th>接触日時</th><td>{{ log.date|date:"Y/m/d H:i" }}</td></tr>
+    <tr><th>接触日時</th><td>{{ log.date|jpdatetime }}</td></tr>
     <tr><th>接触方法</th><td>{{ log.get_method_display }}</td></tr>
     <tr><th>担当者</th><td>{{ log.user.name|default:"-" }}</td></tr>
     <tr><th>内容</th><td>{{ log.content|default:"-" }}</td></tr>

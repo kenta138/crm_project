@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
+{% load jp_dates %}
 {% block title %}日報詳細{% endblock %}
 {% block content %}
 <h2>日報詳細</h2>
 
-<p>日付: {{ report.report_date }}</p>
+<p>日付: {{ report.report_date|jpdate }}</p>
 <p>担当者: {{ report.user.name }}</p>
 <pre>{{ report.content }}</pre>
 

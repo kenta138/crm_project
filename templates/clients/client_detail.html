@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load jp_dates %}
 {% block title %}{{ client.name }}{% endblock %}
 {% block content %}
 <h1>{{ client.name }}</h1>
@@ -11,7 +12,7 @@
     <tr><th>電話番号</th><td>{{ client.phone|default:"-" }}</td></tr>
     <tr><th>メールアドレス</th><td>{{ client.email|default:"-" }}</td></tr>
     <tr><th>メモ</th><td>{{ client.memo|default:"-" }}</td></tr>
-    <tr><th>最終接触日</th><td>{{ client.last_contact_date|date:"Y/m/d H:i"|default:"-" }}</td></tr>
+    <tr><th>最終接触日</th><td>{{ client.last_contact_date|jpdatetime|default:"-" }}</td></tr>
     <tr>
         <th>ラベル</th>
         <td>
@@ -46,7 +47,7 @@
         {% for log in contact_logs %}
         <tr>
             <td><a href="/contacts/{{ log.id }}/">{{ log.title }}</a></td>
-            <td>{{ log.date|date:"Y/m/d H:i" }}</td>
+            <td>{{ log.date|jpdatetime }}</td>
             <td>{{ log.get_method_display }}</td>
             <td>{{ log.user.name|default:"-" }}</td>
         </tr>
@@ -85,7 +86,7 @@
         {% for task in tasks %}
         <tr>
             <td><a href="/tasks/{{ task.id }}/">{{ task.title }}</a></td>
-            <td>{{ task.due_date|date:"Y/m/d"|default:"-" }}</td>
+            <td>{{ task.due_date|jpdate|default:"-" }}</td>
             <td>{{ task.get_status_display }}</td>
             <td>{{ task.assigned_user.name|default:"-" }}</td>
         </tr>

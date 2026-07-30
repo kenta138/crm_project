@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load jp_dates %}
 {% block title %}タスク管理{% endblock %}
 {% block content %}
 <h1>タスク管理</h1>
@@ -41,7 +42,7 @@
         <tr {% if task.due_date and task.due_date < today and task.status != 'done' %}style="background-color: #ffe0e0;"{% endif %}>
             <td><a href="/tasks/{{ task.id }}/">{{ task.title }}</a></td>
             <td><a href="/clients/{{ task.client.id }}/">{{ task.client.name }}</a></td>
-            <td>{{ task.due_date|date:"Y/m/d"|default:"-" }}</td>
+            <td>{{ task.due_date|jpdate|default:"-" }}</td>
             <td>{{ task.get_status_display }}</td>
             <td>{{ task.assigned_user.name|default:"-" }}</td>
             <td>
