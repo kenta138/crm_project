@@ -10,7 +10,7 @@
         <tr>
             <th>タスク名</th>
             <th>取引先</th>
-            <th>期限</th>
+            <th>期日</th>
             <th>ステータス</th>
         </tr>
     </thead>
@@ -29,23 +29,23 @@
 <p>対応が必要なタスクはありません。</p>
 {% endif %}
 
-<h2>自分の最近の接触記録</h2>
+<h2>自分の最近の接触記録 <span class="tooltip-icon">❓<span class="tooltip-text">直近10件の接触記録が表示されています。</span></span> <a href="/contacts/?assigned_user={{ request.user.id }}">もっと見る</a></h2>
 {% if my_recent_contacts %}
 <table border="1">
     <thead>
         <tr>
-            <th>日時</th>
+            <th>タイトル</th>
             <th>取引先</th>
-            <th>件名</th>
+            <th>接触日時</th>
             <th>操作</th>
         </tr>
     </thead>
     <tbody>
         {% for log in my_recent_contacts %}
         <tr>
-            <td>{{ log.date|date:"Y/m/d H:i" }}</td>
-            <td>{{ log.client.name }}</td>
             <td>{{ log.title }}</td>
+            <td>{{ log.client.name }}</td>
+            <td>{{ log.date|date:"Y/m/d H:i" }}</td>
             <td><a href="/contacts/{{ log.id }}/edit/">編集</a></td>
         </tr>
         {% endfor %}

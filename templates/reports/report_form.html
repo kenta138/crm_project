@@ -10,7 +10,7 @@
     <input type="hidden" name="report_date" value="{{ report_date|date:'Y-m-d' }}">
 
     {{ form.non_field_errors }}
-    <div>
+    <div style="display:flex; flex-direction:column; align-items:flex-start; gap:8px;">
         {{ form.content.label_tag }}
         <button type="button" onclick="copyReportContent()">クリップボードにコピー</button>
         {{ form.content }}
