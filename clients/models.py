@@ -50,7 +50,21 @@ class SystemSetting(models.Model):
         verbose_name='要フォロー判定日数',
         help_text='最終接触日からこの日数以上経過した取引先を「要フォロー」として一覧に表示します。'
     )
+    report_prompt_template = models.TextField(
+        default="""以下は{user_name}さんの{date}の接触記録です。
+これをもとに、簡潔な日本語のビジネス日報を作成してください。
 
+# 接触記録
+{logs_text}
+
+# 出力フォーマット
+- 本日の活動概要
+- 対応した取引先一覧
+- 所感・課題
+""",
+        verbose_name='日報生成プロンプト',
+        help_text='日報生成時にAIへ渡すプロンプトのテンプレートです。{user_name}・{date}・{logs_text}のプレースホルダーが使用できます。'
+    )
     class Meta:
         verbose_name = 'システム設定'
         verbose_name_plural = 'システム設定'

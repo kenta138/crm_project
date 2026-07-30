@@ -11,6 +11,7 @@ from django.utils import timezone
 from google import genai
 
 from contacts.models import ContactLog
+from clients.models import SystemSetting
 from .forms import DailyReportForm
 from .models import DailyReport
 
@@ -26,18 +27,12 @@ def _build_prompt(user, report_date, contact_logs):
     ]
     logs_text = '\n'.join(lines)
 
-    return f"""以下は{user.name}さんの{report_date.strftime('%Y年%m月%d日')}の接触記録です。
-これをもとに、簡潔な日本語のビジネス日報を作成してください。
-
-# 接触記録
-{logs_text}
-
-# 出力フォーマット
-- 本日の活動概要
-- 対応した取引先一覧
-- 所感・課題
-"""
-
+    template = SystemSetting.get_solo().report_prompt_template
+    return template.format(
+        user_name=user.name,
+        date=report_date.strftime('%Y年%m月%d日'),
+        logs_text=logs_text,
+    )
 
 @login_required
 def report_list(request):
