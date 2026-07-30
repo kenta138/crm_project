@@ -4,7 +4,10 @@
 {% block content %}
 <h1>ダッシュボード</h1>
 
-<h2>自分のタスク（期限超過・本日期限） <a href="/tasks/?assigned_user={{ request.user.id }}" class="small-link">完了済みのタスクも見る</a></h2>
+<div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+    <h2 style="margin:0;">自分のタスク（期限超過・本日期限） <a href="/tasks/?assigned_user={{ request.user.id }}" class="small-link">完了済みのタスクも見る</a></h2>
+    <a href="/tasks/new/">タスクを追加</a>
+</div>
 {% if my_tasks %}
 <table border="1">
     <thead>
@@ -30,13 +33,16 @@
 <p>対応が必要なタスクはありません。</p>
 {% endif %}
 
-<div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+<div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
     <h2 style="margin:0;">自分の最近の接触記録 <span class="tooltip-icon">❓<span class="tooltip-text">直近10件の接触記録が表示されています。</span></span> <a href="/contacts/?assigned_user={{ request.user.id }}" class="small-link">もっと見る</a></h2>
-    <form method="post" action="{% url 'report_generate' %}" style="display:flex; gap:8px; align-items:center;">
-        {% csrf_token %}
-        <input type="date" name="report_date" value="{{ today|date:'Y-m-d' }}" required>
-        <button type="submit">この日の接触記録から日報を生成する</button>
-    </form>
+    <div style="display:flex; gap:8px; align-items:center;">
+        <form method="post" action="{% url 'report_generate' %}" style="display:flex; gap:8px; align-items:center;">
+            {% csrf_token %}
+            <input type="date" name="report_date" value="{{ today|date:'Y-m-d' }}" required>
+            <button type="submit">この日の接触記録から日報を生成する</button>
+        </form>
+        <a href="/contacts/new/">接触記録を追加</a>
+    </div>
 </div>
 {% if my_recent_contacts %}
 <table border="1">
