@@ -264,3 +264,7 @@ a {
 .overdue-row {
     background-color: #fde8ea;
 }
+
+.small-link {
+    font-size: 0.9rem;
+}
