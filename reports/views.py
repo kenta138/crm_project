@@ -1,3 +1,4 @@
+import threading
 from datetime import datetime
 
 from django.conf import settings
@@ -52,6 +53,56 @@ def report_list(request):
     return render(request, 'reports/report_list.html', {'page_obj': page_obj})
 
 
+def _generate_report_async(user_id, report_date):
+    contact_logs = ContactLog.objects.filter(
+        user_id=user_id,
+        date__date=report_date,
+        deleted_at__isnull=True
+    ).select_related('client').order_by('date')
+
+    if not contact_logs.exists():
+        DailyReport.objects.update_or_create(
+            user_id=user_id,
+            report_date=report_date,
+            defaults={
+                'status': 'failed',
+                'error_message': f'{report_date.strftime("%Y/%m/%d")}の接触記録が見つかりません。',
+                'notified': False,
+            },
+        )
+        return
+
+    user = contact_logs.first().user
+    prompt = _build_prompt(user, report_date, contact_logs)
+
+    try:
+        client = genai.Client(api_key=settings.GOOGLE_API_KEY)
+        response = client.models.generate_content(
+            model='gemini-3-flash-preview',
+            contents=prompt,
+        )
+        DailyReport.objects.update_or_create(
+            user_id=user_id,
+            report_date=report_date,
+            defaults={
+                'content': response.text,
+                'status': 'ready',
+                'error_message': '',
+                'notified': False,
+            },
+        )
+    except Exception as e:
+        DailyReport.objects.update_or_create(
+            user_id=user_id,
+            report_date=report_date,
+            defaults={
+                'status': 'failed',
+                'error_message': str(e),
+                'notified': False,
+            },
+        )
+
+
 @login_required
 def report_generate(request):
     if request.method == 'POST':
@@ -61,38 +112,23 @@ def report_generate(request):
         except (TypeError, ValueError):
             report_date = timezone.localdate()
 
-        contact_logs = ContactLog.objects.filter(
+        DailyReport.objects.update_or_create(
             user=request.user,
-            date__date=report_date,
-            deleted_at__isnull=True
-        ).select_related('client').order_by('date')
-
-        if not contact_logs.exists():
-            messages.error(request, f'{report_date.strftime("%Y/%m/%d")}の接触記録が見つかりません。')
-            return render(request, 'reports/report_generate.html', {'today': timezone.localdate()})
-
-        prompt = _build_prompt(request.user, report_date, contact_logs)
-
-        client = genai.Client(api_key=settings.GOOGLE_API_KEY)
-        response = client.models.generate_content(
-            model='gemini-3-flash-preview',
-            contents=prompt,
+            report_date=report_date,
+            defaults={'status': 'pending', 'error_message': '', 'notified': True},
         )
-        generated_content = response.text
 
-        form = DailyReportForm(initial={'content': generated_content})
-        already_exists = DailyReport.objects.filter(user=request.user, report_date=report_date).exists()
+        thread = threading.Thread(
+            target=_generate_report_async,
+            args=(request.user.id, report_date),
+            daemon=True,
+        )
+        thread.start()
 
-        return render(request, 'reports/report_form.html', {
-            'form': form,
-            'report_date': report_date,
-            'title': '日報プレビュー・編集',
-            'form_action': reverse('report_save'),
-            'already_exists': already_exists,
-        })
-    
+        messages.success(request, f'{report_date.strftime("%Y/%m/%d")}の日報生成を開始しました。完了次第お知らせします。')
+        return redirect('dashboard')
+
     return render(request, 'reports/report_generate.html', {'today': timezone.localdate()})
-
 
 @login_required
 def report_save(request):
@@ -124,8 +160,10 @@ def report_detail(request, pk):
     if report.user != request.user and not can_view_all(request.user):
         messages.error(request, 'この日報を閲覧する権限がありません。')
         return redirect('report_list')
+    if report.status != 'ready':
+        messages.error(request, 'この日報はまだ準備できていません。')
+        return redirect('report_list')
     return render(request, 'reports/report_detail.html', {'report': report})
-
 
 @login_required
 def report_edit(request, pk):
@@ -133,7 +171,10 @@ def report_edit(request, pk):
     if report.user != request.user:
         messages.error(request, 'この日報を編集する権限がありません。')
         return redirect('report_detail', pk=pk)
-
+    if report.status != 'ready':
+        messages.error(request, 'この日報はまだ準備できていません。')
+        return redirect('report_list')
+        
     if request.method == 'POST':
         form = DailyReportForm(request.POST, instance=report)
         if form.is_valid():

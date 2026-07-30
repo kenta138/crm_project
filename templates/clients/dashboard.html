@@ -30,7 +30,14 @@
 <p>対応が必要なタスクはありません。</p>
 {% endif %}
 
-<h2>自分の最近の接触記録 <span class="tooltip-icon">❓<span class="tooltip-text">直近10件の接触記録が表示されています。</span></span> <a href="/contacts/?assigned_user={{ request.user.id }}" class="small-link">もっと見る</a></h2>
+<div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+    <h2 style="margin:0;">自分の最近の接触記録 <span class="tooltip-icon">❓<span class="tooltip-text">直近10件の接触記録が表示されています。</span></span> <a href="/contacts/?assigned_user={{ request.user.id }}" class="small-link">もっと見る</a></h2>
+    <form method="post" action="{% url 'report_generate' %}" style="display:flex; gap:8px; align-items:center;">
+        {% csrf_token %}
+        <input type="date" name="report_date" value="{{ today|date:'Y-m-d' }}" required>
+        <button type="submit">この日の接触記録から日報を生成する</button>
+    </form>
+</div>
 {% if my_recent_contacts %}
 <table border="1">
     <thead>
