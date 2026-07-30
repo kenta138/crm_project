@@ -22,10 +22,17 @@
     </tbody>
 </table>
 
-<form method="get">
-    <input type="text" name="keyword" value="{{ keyword }}" placeholder="会社名で検索">
+<div style="display:flex; gap:8px; align-items:center;">
+    <input type="text" name="keyword" form="filter-form" value="{{ keyword }}" placeholder="会社名で検索">
+    <button type="submit" form="filter-form">検索</button>
+    <a href="/clients/">リセット</a>
+</div>
+
+<h2 id="filter-toggle" style="cursor:pointer;" onclick="toggleFilters()">▶ 絞り込み条件</h2>
+<form method="get" id="filter-form" style="display:none;">
     <fieldset class="filter-group">
-        <legend>フェーズ</legend>        {% for value, label in phases %}
+        <legend>フェーズ</legend>
+        {% for value, label in phases %}
         <label>
             <input type="checkbox" name="phase" value="{{ value }}" {% if value in phase_values %}checked{% endif %}>
             {{ label }}
@@ -40,7 +47,8 @@
             {{ u.name }}
         </label>
         {% endfor %}
-    </fieldset>    最終接触日:
+    </fieldset>
+    最終接触日:
     <input type="date" name="contact_date_from" value="{{ contact_date_from }}">
     〜
     <input type="date" name="contact_date_to" value="{{ contact_date_to }}">
@@ -64,7 +72,6 @@
         <input type="checkbox" name="follow_up_only" value="1" {% if follow_up_only %}checked{% endif %}>
         要フォローのみ表示
     </label>
-    <button type="submit">検索</button>    <a href="/clients/">リセット</a>
 </form>
 
 <p>
@@ -157,6 +164,17 @@ function toggleIdColumns() {
         table.classList.remove('hide-id-columns');
     } else {
         table.classList.add('hide-id-columns');
+    }
+}
+function toggleFilters() {
+    var form = document.getElementById('filter-form');
+    var toggle = document.getElementById('filter-toggle');
+    if (form.style.display === 'none') {
+        form.style.display = 'block';
+        toggle.textContent = '▼ 絞り込み条件';
+    } else {
+        form.style.display = 'none';
+        toggle.textContent = '▶ 絞り込み条件';
     }
 }
 </script>
