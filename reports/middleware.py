@@ -15,11 +15,15 @@ class ReportNotificationMiddleware:
             ).exclude(status='pending')
             for report in pending_reports:
                 if report.status == 'ready':
+                    if report.regenerated:
+                        text = f'{report.report_date.strftime("%Y/%m/%d")}の日報を再生成しました（既存の内容を上書きしました）。'
+                    else:
+                        text = f'{report.report_date.strftime("%Y/%m/%d")}の日報の生成が完了しました。'
                     messages.success(
                         request,
                         format_html(
-                            '{}の日報の生成が完了しました。<a href="{}">編集する</a>',
-                            report.report_date.strftime("%Y/%m/%d"),
+                            '{} <a href="{}">編集する</a>',
+                            text,
                             reverse('report_edit', args=[report.pk])
                         )
                     )

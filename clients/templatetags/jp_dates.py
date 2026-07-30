@@ -1,4 +1,5 @@
 from django import template
+from django.utils import timezone
 
 register = template.Library()
 
@@ -17,5 +18,7 @@ def jpdate(value):
 def jpdatetime(value):
     if not value:
         return ''
+    if timezone.is_aware(value):
+        value = timezone.localtime(value)
     weekday = WEEKDAY_KANJI[value.weekday()]
     return f"{value.strftime('%Y/%m/%d')}({weekday}) {value.strftime('%H:%M')}"

@@ -8,6 +8,7 @@
     <thead>
         <tr>
             <th>日付</th>
+            <th>生成日時</th>
             <th>担当者</th>
             <th>内容（抜粋）</th>
         </tr>
@@ -16,10 +17,12 @@
         {% for report in page_obj %}
         <tr>
             <td>{{ report.report_date|jpdate }}</td>
+            <td>{{ report.updated_at|jpdatetime }}</td>
             <td>{{ report.user.name }}</td>
             <td>
                 {% if report.status == 'ready' %}
                 <a href="{% url 'report_detail' report.pk %}">{{ report.content|truncatechars:40 }}</a>
+                {% if report.regenerated %}<span style="color:orange;">［上書き］</span>{% endif %}
                 {% elif report.status == 'pending' %}
                 生成中...
                 {% else %}
@@ -28,7 +31,7 @@
             </td>
         </tr>
         {% empty %}
-        <tr><td colspan="3">日報がありません。</td></tr>
+        <tr><td colspan="4">日報がありません。</td></tr>
         {% endfor %}
     </tbody>
 </table>

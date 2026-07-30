@@ -53,7 +53,7 @@ def report_list(request):
     return render(request, 'reports/report_list.html', {'page_obj': page_obj})
 
 
-def _generate_report_async(user_id, report_date):
+def _generate_report_async(user_id, report_date, was_existing):
     contact_logs = ContactLog.objects.filter(
         user_id=user_id,
         date__date=report_date,
@@ -89,6 +89,7 @@ def _generate_report_async(user_id, report_date):
                 'status': 'ready',
                 'error_message': '',
                 'notified': False,
+                'regenerated': was_existing,
             },
         )
     except Exception as e:
@@ -112,6 +113,10 @@ def report_generate(request):
         except (TypeError, ValueError):
             report_date = timezone.localdate()
 
+        was_existing = DailyReport.objects.filter(
+            user=request.user, report_date=report_date, status='ready'
+        ).exists()
+
         DailyReport.objects.update_or_create(
             user=request.user,
             report_date=report_date,
@@ -120,7 +125,7 @@ def report_generate(request):
 
         thread = threading.Thread(
             target=_generate_report_async,
-            args=(request.user.id, report_date),
+            args=(request.user.id, report_date, was_existing),
             daemon=True,
         )
         thread.start()
@@ -174,7 +179,7 @@ def report_edit(request, pk):
     if report.status != 'ready':
         messages.error(request, 'この日報はまだ準備できていません。')
         return redirect('report_list')
-        
+
     if request.method == 'POST':
         form = DailyReportForm(request.POST, instance=report)
         if form.is_valid():
