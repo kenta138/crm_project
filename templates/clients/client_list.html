@@ -68,19 +68,22 @@
 </form>
 
 <p>
-    <a href="/clients/new/">新規登録</a>
-    {% if user.role == 'admin' %}
+    <label><input type="checkbox" id="toggle-id-columns" checked onchange="toggleIdColumns()"> システムID・取引先管理IDを表示</label>
+</p>
+
+<p>
+    <a href="/clients/new/">新規登録</a>    {% if user.role == 'admin' %}
     | <a href="/clients/import/">CSVインポート</a>
     | <a href="/clients/export/?{{ base_qs }}">CSVエクスポート</a>    {% endif %}
 </p>
 
-<table border="1">
+<table border="1" id="client-table">
     <thead>
         <tr>
-            <th>システムID
+            <th class="id-column">システムID
                 <a href="?sort=id&{{ base_qs }}" class="sort-arrow {% if sort == 'id' %}sort-active{% endif %}">▲</a><a href="?sort=-id&{{ base_qs }}" class="sort-arrow {% if sort == '-id' %}sort-active{% endif %}">▼</a>
             </th>
-            <th>取引先管理ID
+            <th class="id-column">取引先管理ID
                 <a href="?sort=custom_id&{{ base_qs }}" class="sort-arrow {% if sort == 'custom_id' %}sort-active{% endif %}">▲</a><a href="?sort=-custom_id&{{ base_qs }}" class="sort-arrow {% if sort == '-custom_id' %}sort-active{% endif %}">▼</a>
             </th>
             <th>会社名
@@ -102,8 +105,8 @@
     <tbody>
         {% for client in page_obj %}
         <tr>
-            <td>{{ client.id }}</td>
-            <td>{{ client.custom_id|default:"-" }}</td>
+            <td class="id-column">{{ client.id }}</td>
+            <td class="id-column">{{ client.custom_id|default:"-" }}</td>
             <td><a href="/clients/{{ client.id }}/">{{ client.name }}</a></td>
             <td>{{ client.assigned_user.name|default:"-" }}</td>
             <td>{{ client.get_phase_display }}</td>
@@ -145,6 +148,15 @@ function togglePhaseSummary() {
     } else {
         table.style.display = 'none';
         toggle.textContent = '▶ フェーズ別サマリー';
+    }
+}
+function toggleIdColumns() {
+    var table = document.getElementById('client-table');
+    var checkbox = document.getElementById('toggle-id-columns');
+    if (checkbox.checked) {
+        table.classList.remove('hide-id-columns');
+    } else {
+        table.classList.add('hide-id-columns');
     }
 }
 </script>

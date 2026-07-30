@@ -268,3 +268,11 @@ a {
 .small-link {
     font-size: 0.9rem;
 }
+
+.id-column {
+    display: table-cell;
+}
+
+table.hide-id-columns .id-column {
+    display: none;
+}
