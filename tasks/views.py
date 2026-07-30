@@ -63,6 +63,7 @@ def task_new(request):
     client_id = request.GET.get('client')
     if client_id:
         initial['client'] = client_id
+    initial['assigned_user'] = request.user.id
 
     if request.method == 'POST':
         form = TaskForm(request.POST)
