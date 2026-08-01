@@ -100,8 +100,11 @@
 
 ## デモ
 
-- デモURL: （準備中）
-- デモアカウント: （準備中）
+- デモURL: https://crm-project-mm7n.onrender.com
+  - ※Renderの無料プランのため、しばらくアクセスが無いとスリープします。初回アクセス時は起動に50秒ほどかかる場合があります
+- デモアカウント（Member権限）:
+  - メールアドレス: demomember@email.com
+  - パスワード: changeme123
 
 ## 環境構築
 
