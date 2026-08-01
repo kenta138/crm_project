@@ -112,15 +112,3 @@ def label_delete(request, pk):
         'label': label,
         'client_count': client_count,
     })
-
-
-@login_required
-@admin_required
-def label_toggle(request, pk):
-    label = get_object_or_404(Label, pk=pk)
-    if request.method == 'POST':
-        label.is_active = not label.is_active
-        label.save()
-        status = '有効' if label.is_active else '無効'
-        messages.success(request, f'項目を{status}にしました。')
-    return redirect('label_top')

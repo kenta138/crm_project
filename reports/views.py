@@ -128,31 +128,7 @@ def report_generate(request):
         messages.success(request, f'{report_date.strftime("%Y/%m/%d")}の日報生成を開始しました。完了次第お知らせします。')
         return redirect('dashboard')
 
-    return render(request, 'reports/report_generate.html', {'today': timezone.localdate()})
-
-@login_required
-def report_save(request):
-    if request.method != 'POST':
-        return redirect('report_generate')
-
-    report_date = datetime.strptime(request.POST.get('report_date'), '%Y-%m-%d').date()
-    form = DailyReportForm(request.POST)
-    if form.is_valid():
-        report, _ = DailyReport.objects.update_or_create(
-            user=request.user,
-            report_date=report_date,
-            defaults={'content': form.cleaned_data['content']},
-        )
-        messages.success(request, '日報を保存しました。')
-        return redirect('report_detail', pk=report.pk)
-
-    return render(request, 'reports/report_form.html', {
-        'form': form,
-        'report_date': report_date,
-        'title': '日報プレビュー・編集',
-        'form_action': reverse('report_save'),
-    })
-
+    return redirect('dashboard')
 
 @login_required
 def report_detail(request, pk):

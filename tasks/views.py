@@ -6,7 +6,6 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from .models import Task
 from .forms import TaskForm
-from clients.models import Client
 from accounts.models import User
 
 

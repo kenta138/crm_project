@@ -9,5 +9,4 @@ urlpatterns = [
     path('labels/new/', views.label_new, name='label_new'),
     path('labels/<int:pk>/edit/', views.label_edit, name='label_edit'),
     path('labels/<int:pk>/delete/', views.label_delete, name='label_delete'),
-    path('labels/<int:pk>/toggle/', views.label_toggle, name='label_toggle'),
 ]

@@ -13,7 +13,7 @@ from django.http import HttpResponse
 from .models import Client, SystemSetting
 from .forms import ClientForm
 from tasks.models import Task
-from labels.models import Category, Label
+from labels.models import Category
 from contacts.models import ContactLog
 from accounts.models import User
 
@@ -239,7 +239,7 @@ def client_edit(request, pk):
         'selected_label_ids': list(client.labels.values_list('id', flat=True)),
         'next_url': next_url,
     })
-    
+
 @login_required
 @admin_required
 def client_delete(request, pk):
