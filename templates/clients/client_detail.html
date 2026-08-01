@@ -29,10 +29,12 @@
     {% if can_edit %}
     <a href="/clients/{{ client.id }}/edit/">編集</a>
     {% endif %}
-    <a href="/contacts/new/?client={{ client.id }}">接触記録を追加</a>
 </p>
 
 <h2>接触記録（直近10件） <a href="/contacts/?client={{ client.id }}">すべて見る</a></h2>
+<p>
+    <a href="/contacts/new/?client={{ client.id }}" class="btn-add">接触記録を追加</a>
+</p>
 {% if contact_logs %}
 <table border="1">
     <thead>
@@ -70,7 +72,7 @@
     <a href="/clients/{{ client.id }}/">リセット</a>
 </form>
 
-<a href="/tasks/new/?client={{ client.id }}">タスクを追加</a>
+<a href="/tasks/new/?client={{ client.id }}" class="btn-add">タスクを追加</a>
 
 {% if tasks %}
 <table border="1">

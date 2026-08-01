@@ -79,7 +79,8 @@
 </p>
 
 <p>
-    <a href="/clients/new/">新規登録</a>    {% if user.role == 'admin' %}
+    <a href="/clients/new/" class="btn-add">新規登録</a>
+    {% if user.role == 'admin' %}
     | <a href="/clients/import/">CSVインポート</a>
     | <a href="/clients/export/?{{ base_qs }}">CSVエクスポート</a>    {% endif %}
 </p>
