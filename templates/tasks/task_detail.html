@@ -32,7 +32,7 @@
 {% if can_delete %}
 <form method="post" action="/tasks/{{ task.id }}/delete/">
     {% csrf_token %}
-    <button type="submit" onclick="return confirm('本当に削除しますか？')">削除</button>
+    <button type="submit" class="btn-delete-subtle" onclick="return confirm('本当に削除しますか？')">削除</button>
 </form>
 {% endif %}
 
