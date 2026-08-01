@@ -1,49 +1,60 @@
 from django import forms
 from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
+
 from .models import User
 
 
 class SignupForm(forms.ModelForm):
-    password = forms.CharField(label='パスワード', widget=forms.PasswordInput)
-    password_confirm = forms.CharField(label='パスワード（確認）', widget=forms.PasswordInput)
+    # password/password_confirmはUserモデルのフィールドではなく、確認用にフォームだけに持たせる項目
+    password = forms.CharField(label="パスワード", widget=forms.PasswordInput)
+    password_confirm = forms.CharField(
+        label="パスワード（確認）", widget=forms.PasswordInput
+    )
 
     class Meta:
         model = User
-        fields = ['email', 'name']
+        fields = ["email", "name"]
         labels = {
-            'email': 'メールアドレス',
-            'name': '氏名',
+            "email": "メールアドレス",
+            "name": "氏名",
         }
 
     def clean_email(self):
-        email = self.cleaned_data['email'].strip().lower()
+        # settings.SIGNUP_ALLOWED_EMAIL_DOMAINSが設定されている場合のみ、
+        # 許可ドメイン以外からのサインアップを拒否する(社内限定運用などを想定)
+        email = self.cleaned_data["email"].strip().lower()
         allowed_domains = settings.SIGNUP_ALLOWED_EMAIL_DOMAINS
         if allowed_domains:
-            domain = email.split('@')[-1]
+            domain = email.split("@")[-1]
             if domain not in allowed_domains:
-                raise forms.ValidationError('このメールアドレスのドメインではサインアップできません。')
+                raise forms.ValidationError(
+                    "このメールアドレスのドメインではサインアップできません。"
+                )
         if User.objects.filter(email=email).exists():
-            raise forms.ValidationError('このメールアドレスは既に登録されています。')
+            raise forms.ValidationError("このメールアドレスは既に登録されています。")
         return email
 
     def clean_password(self):
-        password = self.cleaned_data.get('password')
+        # Djangoの標準パスワードバリデータ(長さ・類似性・よくあるパスワードなど)を適用する
+        password = self.cleaned_data.get("password")
         validate_password(password)
         return password
 
     def clean(self):
         cleaned_data = super().clean()
-        password = cleaned_data.get('password')
-        password_confirm = cleaned_data.get('password_confirm')
+        password = cleaned_data.get("password")
+        password_confirm = cleaned_data.get("password_confirm")
         if password and password_confirm and password != password_confirm:
-            raise forms.ValidationError('パスワードが一致しません。')
+            raise forms.ValidationError("パスワードが一致しません。")
         return cleaned_data
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.set_password(self.cleaned_data['password'])
-        user.role = 'member'
+        user.set_password(self.cleaned_data["password"])
+        user.role = "member"
+        # 誰でも即ログインできてしまわないよう、サインアップ直後は無効化しておき、
+        # 管理者がDjango管理画面でis_active=Trueにするまでログイン不可とする
         user.is_active = False
         if commit:
             user.save()
