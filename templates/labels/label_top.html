@@ -4,9 +4,10 @@
 <h1>ラベル管理</h1>
 
 <h2>ラベル新規追加</h2>
-<form method="post" action="/labels/category/new/">
+<form method="post" action="/labels/category/new/" style="display:flex; gap:8px; align-items:center;">
     {% csrf_token %}
-    {{ category_form.as_p }}
+    {{ category_form.name.label_tag }}
+    {{ category_form.name }}
     <button type="submit">追加</button>
 </form>
 <h2>ラベル・項目一覧</h2>
@@ -14,12 +15,12 @@
 <h3>
     {{ category.name }}
     <a href="/labels/category/{{ category.id }}/edit/">編集</a>
-    <a href="/labels/category/{{ category.id }}/delete/">削除</a>
+    <a href="/labels/category/{{ category.id }}/delete/" class="btn-delete-subtle">このラベルを削除する</a>
 </h3>
 <form method="post" action="/labels/new/" style="display:inline;">
     {% csrf_token %}
     <input type="hidden" name="category" value="{{ category.id }}">
-    <input type="hidden" name="is_active" value="on">
+    <input type="hidden" name="is_active" value="True">
     <input type="text" name="name" placeholder="新規項目名" required>
     <button type="submit">項目追加</button>
 </form>
@@ -40,13 +41,6 @@
             <td>{{ label.clients.count }}件</td>
             <td>
                 <a href="/labels/{{ label.id }}/edit/">編集</a>
-                <form method="post" action="/labels/{{ label.id }}/toggle/" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit">
-                        {% if label.is_active %}無効にする{% else %}有効にする{% endif %}
-                    </button>
-                </form>
-                <a href="/labels/{{ label.id }}/delete/">削除</a>
             </td>
         </tr>
         {% empty %}

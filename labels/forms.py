@@ -12,11 +12,17 @@ class CategoryForm(forms.ModelForm):
 
 
 class LabelForm(forms.ModelForm):
+    is_active = forms.TypedChoiceField(
+        choices=[(True, '有効'), (False, '無効')],
+        coerce=lambda x: x == 'True',
+        label='有効',
+        widget=forms.Select,
+    )
+
     class Meta:
         model = Label
         fields = ['category', 'name', 'is_active']
         labels = {
             'name': '項目名',
             'category': 'ラベル',
-            'is_active': '有効',
         }
