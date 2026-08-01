@@ -14,7 +14,7 @@
 
 {% if can_edit %}
 <p>
-    <a href="/contacts/{{ log.id }}/edit/">編集</a>
+    <a href="/contacts/{{ log.id }}/edit/" class="btn-edit">編集</a>
 </p>
 <form method="post" action="/contacts/{{ log.id }}/delete/">
     {% csrf_token %}
