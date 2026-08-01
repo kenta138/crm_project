@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
@@ -76,6 +77,9 @@ def contact_new(request):
     if client_id:
         initial['client'] = client_id
 
+    default_next = reverse('client_detail', args=[client_id]) if client_id else '/contacts/'
+    next_url = request.POST.get('next') or request.GET.get('next') or default_next
+
     if request.method == 'POST':
         form = ContactLogForm(request.POST, request=request)
         if form.is_valid():
@@ -110,7 +114,7 @@ def contact_new(request):
     else:
         form = ContactLogForm(initial=initial, request=request)
 
-    return render(request, 'contacts/contact_form.html', {'form': form, 'title': '接触記録入力'})
+    return render(request, 'contacts/contact_form.html', {'form': form, 'title': '接触記録登録', 'next_url': next_url})
 
 
 @login_required
@@ -148,8 +152,8 @@ def contact_edit(request, pk):
     else:
         form = ContactLogForm(instance=log)
 
-    return render(request, 'contacts/contact_form.html', {'form': form, 'title': '接触記録編集'})
-
+    next_url = request.POST.get('next') or request.GET.get('next') or reverse('contact_detail', args=[pk])
+    return render(request, 'contacts/contact_form.html', {'form': form, 'title': '接触記録編集', 'next_url': next_url})
 
 @login_required
 def contact_delete(request, pk):

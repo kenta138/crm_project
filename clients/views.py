@@ -1,3 +1,4 @@
+from django.urls import reverse
 from urllib.parse import urlencode
 from datetime import timedelta
 from django.db.models import Q
@@ -179,11 +180,13 @@ def client_new(request):
             return redirect('client_list')
     else:
         form = ClientForm()
+    next_url = request.POST.get('next') or request.GET.get('next') or '/clients/'
     return render(request, 'clients/client_form.html', {
         'form': form,
         'title': '取引先新規登録',
         'categories': categories,
         'selected_label_ids': [],
+        'next_url': next_url,
     })
 
 @login_required
@@ -221,6 +224,7 @@ def client_detail(request, pk):
 def client_edit(request, pk):
     client = get_object_or_404(Client, pk=pk, deleted_at__isnull=True)
     categories = Category.objects.prefetch_related('labels').all()
+    next_url = request.POST.get('next') or request.GET.get('next') or reverse('client_detail', args=[pk])
     if request.method == 'POST':
         form = ClientForm(request.POST, instance=client)
         if form.is_valid():
@@ -233,8 +237,9 @@ def client_edit(request, pk):
         'title': '取引先編集',
         'categories': categories,
         'selected_label_ids': list(client.labels.values_list('id', flat=True)),
+        'next_url': next_url,
     })
-
+    
 @login_required
 @admin_required
 def client_delete(request, pk):

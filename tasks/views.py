@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
@@ -65,6 +66,9 @@ def task_new(request):
         initial['client'] = client_id
     initial['assigned_user'] = request.user.id
 
+    default_next = reverse('client_detail', args=[client_id]) if client_id else '/tasks/'
+    next_url = request.POST.get('next') or request.GET.get('next') or default_next
+
     if request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
@@ -74,7 +78,7 @@ def task_new(request):
     else:
         form = TaskForm(initial=initial)
 
-    return render(request, 'tasks/task_form.html', {'form': form, 'title': 'タスク新規登録'})
+    return render(request, 'tasks/task_form.html', {'form': form, 'title': 'タスク新規登録', 'next_url': next_url})
 
 
 @login_required
@@ -93,6 +97,7 @@ def task_detail(request, pk):
 @login_required
 def task_edit(request, pk):
     task = get_object_or_404(Task, pk=pk, deleted_at__isnull=True)
+    next_url = request.POST.get('next') or request.GET.get('next') or reverse('task_detail', args=[pk])
     if request.method == 'POST':
         form = TaskForm(request.POST, instance=task)
         if form.is_valid():
@@ -101,7 +106,7 @@ def task_edit(request, pk):
             return redirect('task_detail', pk=pk)
     else:
         form = TaskForm(instance=task)
-    return render(request, 'tasks/task_form.html', {'form': form, 'title': 'タスク編集'})
+    return render(request, 'tasks/task_form.html', {'form': form, 'title': 'タスク編集', 'next_url': next_url})
 
 
 @login_required
