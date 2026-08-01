@@ -96,8 +96,8 @@ def contact_new(request):
                 client.last_contact_date = latest.date
                 client.save()
 
-            # タスク同時作成
-            if form.cleaned_data.get('create_task'):
+            # タスク同時作成（「タスクも同時に保存する」ボタンの場合のみ）
+            if request.POST.get('action') == 'save_with_task':
                 task_title = form.cleaned_data.get('task_title')
                 if task_title:
                     Task.objects.create(

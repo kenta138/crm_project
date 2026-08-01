@@ -6,8 +6,24 @@
 <form method="post">
     {% csrf_token %}
     <input type="hidden" name="next" value="{{ next_url }}">
-    {{ form.as_p }}
+    {% for field in form %}
+        {% if field.name == 'task_title' %}
+        <p>
+            <button type="submit" name="action" value="save_only">接触記録だけを保存する</button>
+        </p>
+        <hr>
+        {% endif %}
+        <p>
+            {{ field.label_tag }}
+            {{ field }}
+            {{ field.errors }}
+        </p>
+    {% endfor %}
+    {% if 'task_title' in form.fields %}
+    <button type="submit" name="action" value="save_with_task">タスクも同時に保存する</button>
+    {% else %}
     <button type="submit">保存</button>
+    {% endif %}
     <a href="{{ next_url }}">キャンセル</a>
 </form>
 

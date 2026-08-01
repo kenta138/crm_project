@@ -12,10 +12,6 @@ class ContactLogForm(forms.ModelForm):
         widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M'),
         initial=timezone.now,
     )
-    create_task = forms.BooleanField(
-        required=False,
-        label='タスクを同時作成する'
-    )
     task_title = forms.CharField(
         required=False,
         label='タスクタイトル',
@@ -56,3 +52,7 @@ class ContactLogForm(forms.ModelForm):
             self.fields['task_due_date'].initial = timezone.localdate() + timedelta(days=1)
             if request:
                 self.fields['task_assigned_user'].initial = request.user
+        else:
+            del self.fields['task_title']
+            del self.fields['task_due_date']
+            del self.fields['task_assigned_user']
