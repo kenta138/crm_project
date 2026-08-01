@@ -31,7 +31,7 @@
     {% endif %}
 </p>
 
-<h2>接触記録（直近10件） <a href="/contacts/?client={{ client.id }}">すべて見る</a></h2>
+<h2>接触記録（直近10件） <a href="/contacts/?client={{ client.id }}" class="small-link">すべて見る</a></h2>
 <p>
     <a href="/contacts/new/?client={{ client.id }}" class="btn-add">接触記録を追加</a>
 </p>
@@ -103,7 +103,7 @@
 {% if can_delete %}
 <form method="post" action="/clients/{{ client.id }}/delete/">
     {% csrf_token %}
-    <button type="submit" onclick="return confirm('本当に削除しますか？')">この取引先を削除</button>
+    <button type="submit" class="btn-delete-subtle" onclick="return confirm('本当に削除しますか？')">この取引先を削除</button>
 </form>
 {% endif %}
 

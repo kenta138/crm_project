@@ -292,3 +292,18 @@ table.hide-id-columns .id-column {
 .btn-add:hover {
     background-color: #229954;
 }
+
+.btn-delete-subtle {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    text-decoration: underline;
+    padding: 0;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.btn-delete-subtle:hover {
+    background: none;
+    color: #c0392b;
+}
