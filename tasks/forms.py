@@ -18,7 +18,7 @@ class TaskForm(forms.ModelForm):
         fields = ["client", "title", "due_date", "status", "assigned_user"]
         labels = {
             "client": "取引先",
-            "title": "タイトル",
+            "title": "タスク名",
             "status": "ステータス",
             "assigned_user": "担当者",
         }

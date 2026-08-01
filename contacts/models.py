@@ -19,12 +19,14 @@ class ContactMethod(models.Model):
 
 class ContactLog(models.Model):
     # 接触方法の選択肢。ContactMethodモデルとは別に、フォームの選択肢として固定で持たせている。
+    # 「来訪」(先方がこちらに来る)と「訪問」(こちらから先方に出向く)を区別して持つ。
     METHOD_CHOICES = [
         ("phone", "電話"),
         ("email", "メール"),
         ("line", "LINE"),
         ("visit", "来訪"),
-        ("online", "訪問"),
+        ("our_visit", "訪問"),
+        ("online", "オンライン"),
         ("other", "その他"),
     ]
 
