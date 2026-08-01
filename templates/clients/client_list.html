@@ -165,7 +165,17 @@ function toggleIdColumns() {
     } else {
         table.classList.add('hide-id-columns');
     }
+    localStorage.setItem('showIdColumns', checkbox.checked);
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    var checkbox = document.getElementById('toggle-id-columns');
+    var saved = localStorage.getItem('showIdColumns');
+    if (saved !== null) {
+        checkbox.checked = (saved === 'true');
+        toggleIdColumns();
+    }
+});
 function toggleFilters() {
     var form = document.getElementById('filter-form');
     var toggle = document.getElementById('filter-toggle');
