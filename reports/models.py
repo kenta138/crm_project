@@ -39,3 +39,20 @@ class DailyReport(models.Model):
         # 1ユーザー・1対象日につき日報は1件のみ(再生成時はupdate_or_createで上書きする)
         unique_together = ("user", "report_date")
         ordering = ["-report_date"]
+
+
+
+class ReportGenerationLog(models.Model):
+    """日報生成の試行回数を記録する専用ログ。1日あたりの生成回数上限を判定するために使用する。
+    DailyReportは(user, report_date)ごとに1件しか持たないため、同じ日付への再生成を
+    区別してカウントできない。そのため生成の「試行」自体を、対象日に関わらず都度1件ずつ
+    記録する形にしている。"""
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="report_generation_logs"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "日報生成ログ"
+        verbose_name_plural = "日報生成ログ"

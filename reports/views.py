@@ -14,8 +14,9 @@ from clients.models import SystemSetting
 from contacts.models import ContactLog
 
 from .forms import DailyReportForm
-from .models import DailyReport
+from .models import DailyReport, ReportGenerationLog
 
+DAILY_GENERATION_LIMIT = 3  # 1ユーザーあたり、1日に生成を試みられる回数の上限
 
 def can_view_all(user):
     """他ユーザー分の日報も閲覧できるロールかどうかを判定する。"""
@@ -81,9 +82,14 @@ def _generate_report_async(user_id, report_date, was_existing):
         )
         return
 
+    # ここまで到達した時点で実際にAPIを呼び出すことが確定するため、
+    # 生成回数のカウントはこの時点で行う
+    # (接触記録が無く早期returnした場合はAPI未呼び出しのためカウントしない)
+    ReportGenerationLog.objects.create(user_id=user_id)
+
     user = contact_logs.first().user
     prompt = _build_prompt(user, report_date, contact_logs)
-
+    
     try:
         client = genai.Client(api_key=settings.GOOGLE_API_KEY)
         response = client.models.generate_content(
@@ -125,6 +131,21 @@ def report_generate(request):
             report_date = datetime.strptime(date_str, "%Y-%m-%d").date()
         except (TypeError, ValueError):
             report_date = timezone.localdate()
+        
+
+        # 1日あたりの生成回数上限チェック(対象日ではなく「生成を試みた日」基準でカウント。
+        # 同じ日に別の対象日を指定して生成しても、合算して上限に達していれば拒否する)
+        today = timezone.localdate()
+        attempts_today = ReportGenerationLog.objects.filter(
+            user=request.user, created_at__date=today
+        ).count()
+        if attempts_today >= DAILY_GENERATION_LIMIT:
+            messages.error(
+                request,
+                f"本日の日報生成回数が上限（{DAILY_GENERATION_LIMIT}回）に達しました。"
+                "追加の生成が必要な場合は、サイト管理者にご確認ください。",
+            )
+            return redirect("dashboard")
 
         # 既にready状態の日報が存在する場合は「上書き(再生成)」として扱い、
         # 一覧画面でその旨を表示するためのフラグとして後段の非同期処理に渡す。

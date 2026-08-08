@@ -36,7 +36,7 @@
 <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
     <h2 style="margin:0;">自分の最近の接触記録 <span class="tooltip-icon">❓<span class="tooltip-text">直近10件の接触記録が表示されています。</span></span> <a href="/contacts/?assigned_user={{ request.user.id }}" class="small-link">もっと見る</a></h2>
     <div style="display:flex; gap:8px; align-items:center;">
-        <form method="post" action="{% url 'report_generate' %}" style="display:flex; gap:8px; align-items:center; margin:0;">
+        <form method="post" action="{% url 'report_generate' %}" style="display:flex; gap:8px; align-items:center; margin:0;" onsubmit="return confirmReportGenerate(this)">
             {% csrf_token %}
             <input type="date" name="report_date" value="{{ today|date:'Y-m-d' }}" required>
             <button type="submit">この日の接触記録から日報を生成する</button>
@@ -68,5 +68,16 @@
 {% else %}
 <p>接触記録がありません。</p>
 {% endif %}
-
+<script>
+    function confirmReportGenerate(form) {
+        var dateInput = form.querySelector('input[name="report_date"]');
+        var parts = dateInput.value.split('-');
+        if (parts.length !== 3) {
+            return true;
+        }
+        var month = parseInt(parts[1], 10);
+        var day = parseInt(parts[2], 10);
+        return confirm(month + '月' + day + '日の接触記録から日報を生成します。よろしいですか？');
+    }
+    </script>
 {% endblock %}
