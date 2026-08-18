@@ -126,3 +126,5 @@ source venv/bin/activate
 
 # 依存パッケージのインストール
 pip install -r requirements.txt
+
+# aaa
